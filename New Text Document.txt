@@ -1,0 +1,283 @@
+function onChange(control, oldValue, newValue, isLoading) {
+   if (isLoading || newValue == '') {
+      return;
+   }
+//var service = g_form.getValue('intrnl_billing_business_service');
+
+if(newValue == "transport" || "internet")
+	{
+		g_form.addOption('intrnl_billing_service_selection', 'change', 'Change');
+	g_form.removeOption('intrnl_billing_service_selection', 'move');
+			g_form.removeOption('intrnl_billing_service_selection', 'disconnect');
+			g_form.removeOption('intrnl_billing_service_selection', 'add');
+	}
+	else if(newValue !="voice")
+		{
+			g_form.addOption('intrnl_billing_service_selection', 'change', 'Change');
+	g_form.removeOption('intrnl_billing_service_selection', 'move','Move');
+			g_form.addOption('intrnl_billing_service_selection', 'disconnect','Disconnect');
+			g_form.addOption('intrnl_billing_service_selection', 'add','Add');
+			
+		}
+   //Type appropriate comment here, and begin script below
+   
+}
+
+-----------------------------------------------------------------------------------------------------------------
+
+
+function onChange(control, oldValue, newValue, isLoading) {
+   if (isLoading || newValue == '') {
+      return;
+   }
+
+   //Type appropriate comment here, and begin script below
+   if(g_form.getValue('intrnl_billing_business_service')== 'transport' ||
+g_form.getValue('intrnl_billing_business_service')== 'internet'){
+	  
+g_form.removeOption('intrnl_billing_service_selection', 'move');
+	g_form.removeOption('intrnl_billing_service_selection', 'disconnect');
+	g_form.removeOption('intrnl_billing_service_selection', 'add');
+	g_form.addOption('intrnl_billing_service_selection', 'change', 'Change');
+ 
+}
+ 
+}
+
+------------------------------------------------------------------------------------------------------------------
+
+Working
+
+function onChange(control, oldValue, newValue, isLoading) {
+   if (isLoading || newValue == '') {
+      return;
+   }
+
+   //Type appropriate comment here, and begin script below
+   if(g_form.getValue('intrnl_billing_business_service')== 'transport' ||
+g_form.getValue('intrnl_billing_business_service')== 'internet'){
+	  
+g_form.removeOption('intrnl_billing_service_selection', 'move');
+	g_form.removeOption('intrnl_billing_service_selection', 'disconnect');
+	g_form.removeOption('intrnl_billing_service_selection', 'add');
+	g_form.addOption('intrnl_billing_service_selection', 'change', 'Change');
+ 
+}
+	if(g_form.getValue('intrnl_billing_business_service')== 'voice' ){
+		g_form.removeOption('intrnl_billing_service_selection', 'move');
+		g_form.addOption('intrnl_billing_service_selection', 'change', 'Change');
+		g_form.addOption('intrnl_billing_service_selection', 'add', 'Add');
+		g_form.addOption('intrnl_billing_service_selection', 'disconnect', 'Disconnect');
+	}
+ }
+
+
+------------------------------------------------------------------------------------------------------------------
+
+Week of 02/25/19
+
+mon:  off
+tues: 1hr call, 2 hr modify billing client script,5 hrs modify billing atf fulfiller UI
+wed:  3 hr atf modify billing fulfiller, 4 hour atf portal,call 
+thurs: 1 hr nb KT,
+
+28th jan week: 2 hrs fri(1/02/19)STRY0034988-2019pass1
+4th feb week: STRY0036098 1 hr-pass1
+              STRY0036287 1 hr-pass1
+              STRY0036851 1 hr-pass1
+              STRY0036847 5 hrs-pass1
+              STRY0034990 1 hr-pass1
+              STRY0036101 6 hrs-pass1, Standup call-1hr & meeting 0.5 hr
+
+11th feb week: STRY0036101 15 hrs-pass1
+               STRY0036098 5 hrs-pass1
+               Standup call-0.5 hr & meeting 0.5 hr
+18th feb week: STRY0035860 11 hrs-pass1
+               STRY0031237 2 hrs-pass6
+25th feb week: STRY0036076 17 hrs-pass1
+               STRY0035860 2 hrs-pass1
+               standup call & ATF demo 4 hrs
+
+
+
+0e831bce1bc8f38077ecfee8cd4bcb01
+
+
+ea3f61aa1b44778077ecfee8cd4bcb38
+
+
+-I am productive with the work I deliver though there have been some cases where I need to plan my work better in order to achieve the goals.
+
+-I believe that I am an important member of my team.I help my team by not only providing my ideas on requirements but also work as a team to achieve our targets.
+
+-I believe that I mostly work keeping in mind all aspects of risk and time management. 
+
+-I believe that I am a responsible member of my team with my individual thought process, ideas and zeal to work efficiently.
+
+-I have actively taken part in the Strategy sessions 2019.I have also completed the delta certifications, micro certifications on Agent Intelligence and Virtual Agent. I enjoy contributing in the knowledge sessions held every thursday
+
+-I believe that whatever I do is with full dedication and loyalty.
+-No concerns.I try my best to solve any problem with my ideas.I also believe in taking an opinion from my colleagues about my ideas.
+-From the time I joined to now, the learning curve has definitely gone up.I enjoy learning anything new that comes my way.
+-I learn and adapt quickly so picking up skills is just a matter of time for me. I can firmly say that I have built good relationship with my team and other colleagues and people do respect me and love working with me.
+-I don't stretch to meet the expectations but I would also say that I am not yet exceptional at my work. I need to plan my work better.
+
+
+
+
+7c4ca0f21bcc778077ecfee8cd4bcb1f
+
+
+
+3b3ee4761bcc778077ecfee8cd4bcb83
+
+----------------------------------------------------------------------------------------------------------
+billing story
+
+current.variables.intrnl_billing_current_step = 2;
+var business_service = current.variables.intrnl_billing_business_service;
+var business = new GlideRecord('cmdb_ci_service');
+if(business_service == 'data' || business_service=='fiber'){
+business.addQuery('name','Transport');
+}else{
+business.addQuery('name', business_service);
+}
+business.query();
+if(business.next()){
+current.business_service = business.sys_id;
+	
+	var number = current.getDisplayValue("request");
+
+	var business_ser = new GlideRecord('sc_request');
+	business_ser.addQuery('number',number);
+	business_ser.query();
+	if(business_ser.next()){
+		business_ser.business_service = business.sys_id;
+		business_ser.update();
+	}
+	
+}REQ0018199 
+
+
+---------------------------------------------------------------------------------------------------------------
+
+Re-direct to portal and fulfiller incident notification 
+
+(function runMailScript(current, template, email, email_action, event) {
+	var link = current.getLink();
+	var sysid = current.sys_id;
+		if (email_action.name != "Incident Resolved") {
+		template.print('<p><font size="3" color="#808080" face="helvetica">');
+		template.print(gs.getMessage('You can view all the details of the incident by following the link below:'));
+		template.print('</font></p>');
+	}
+	else {
+		template.print('<p><font size="3" color="#808080" face="helvetica">');
+		template.print(gs.getMessage('If you feel the issue is not resolved, please click the following link and reopen your incident:'));
+		template.print('</font></p>');
+	}
+	template.print('<font face="helvetica">');
+	
+	var backgroundColor = 'background-color: #278efc;';
+	var border = 'border: 1px solid #0368d4;';
+	var color = 'color: #ffffff;';
+	var fontSize = 'font-size: 16px;';
+	var fontFamily = 'font-family: Helvetica, Arial, sans-serif;';
+	var textDecoration = 'text-decoration: none; border-radius: 3px;';
+	var webKitBorder = '-webkit-border-radius: 3px;';
+	var mozBorder = '-moz-border-radius: 3px;';
+	var display = 'display: inline-block;';
+	var padding = 'padding: 5px;';
+	
+	if (email_action.name == "Incident Survey") {
+		color = 'color: #343d47;';
+		backgroundColor = 'background-color: #e6e8ea;';
+		border = 'border: 1px solid #bdc0c4;';
+	}
+	if (!(gs.getUser().getUserByID(current.getValue('caller_id')).hasRole('itil'))){
+	template.print('<a href="' + gs.getProperty('glide.servlet.uri') + 'customer_portal?sys_id=' +sysid+ '&view=sp&id=ticket&table=incident"');
+	}
+ else
+ {
+  template.print('<a href="' + link + '"');
+ }
+	template.print('style="' + backgroundColor + border + color + fontSize + fontFamily + textDecoration + webKitBorder + mozBorder + display + padding);
+
+	template.print('">');
+	template.print(gs.getMessage('Take me to the Incident'));
+	template.print('</a>');
+	template.print('</font>');
+	template.print('<br><br>');
+	template.print('<p><font size="3" color="#808080" face="helvetica">');
+	template.print('Thank you.');
+	template.print('</font></p>');
+})(current, template, email, email_action, event);
+
+--------------------------------------------------------------------------------------------------------------
+
+Notification for watchlist removed - Business Rule
+
+(function executeRule(current, previous /*null when async*/) {
+	var array= new ArrayUtil();
+	var cur = current.watch_list ;
+	var pre = previous.watch_list ;
+	var currArr = current.watch_list.split(',');
+	var prevArr = previous.watch_list.split(',');
+
+
+	if(  cur && pre ){
+		
+		var sid = [];
+		
+		prevArr.forEach(function(e){
+			if(currArr.indexOf(e) == -1){
+				sid.push(e);
+				gs.info("sid assigned : " + sid);
+			}
+		});
+		
+		if((cur+"").length < (pre +"").length){ 
+			gs.eventQueue('inry_incident_watchlist_user_removed', current,sid.join(","));
+		} 
+		
+	}else{
+		
+		if(pre){
+			gs.eventQueue('inry_incident_watchlist_user_removed', current,prevArr.join(","));
+		}
+	}
+
+ /*
+	if(array.diff(currArr, prevArr).length<0){
+
+		}
+		*/
+ })(current, previous);
+
+
+
+-----------------------------------------------------------------------------------------------------------------
+
+Week of 18th march
+Mon- workflow
+tues - workflow and atf setup document for billing only request
+wed - document
+thurs - document(WF)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
