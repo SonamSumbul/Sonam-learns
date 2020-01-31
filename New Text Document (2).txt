@@ -1,0 +1,147 @@
+b944ab754fb988580e65c0f18110c73b,
+b944ab754fb988580e65c0f18110c73b,
+b944ab754fb988580e65c0f18110c73b,
+b944ab754fb988580e65c0f18110c73b,
+b944ab754fb988580e65c0f18110c73b,
+b944ab754fb988580e65c0f18110c73b,
+b944ab754fb988580e65c0f18110c73b,
+	b944ab754fb988580e65c0f18110c73b
+
+
+mail script
+---------------------------------------------------------------------
+(function runMailScript(/* GlideRecord */ current, /* TemplatePrinter */ template,
+										   /* Optional EmailOutbound */ email, /* Optional GlideRecord */ email_action,
+										   /* Optional GlideRecord */ event) {
+
+	
+	var appID = event.parm1;
+	var gr=new GlideRecord('cert_element');
+	//gr.addEncodedQuery('cert_task='+current.cert_task+'^element=active^original_value=true');
+	gr.addEncodedQuery('cert_task='+current.sys_id + '^id=' + appID);
+	//gr.addQuery('cert_task', current.sys_id);
+	gr.query();
+	
+	if(gr.next()){
+		template.print( gr.id.getDisplayValue('name')+'<br><br>');
+		gs.info("Testing abc" + gr.id);
+		//var gr1=new GlideRecord('cert_element');
+		//gr1.addEncodedQuery('cert_task='+ current.sys_id + '^id=' + gr.id);
+		//gr.addQuery('cert_task', current.sys_id);
+		//gr1.query();
+		template.print('<table border="1"><thead><tr><th>Certification Element</th><th>Value</th></tr></thead><tbody>');
+		while(gr.next()){
+			var name =gr.getDisplayValue('element');
+			var value = "id." + name;
+			template.print('<tr><td>'+gr.getElement(value).getLabel()+'</td><td>'+gr.getDisplayValue(value)+'</td></tr>');
+
+		}
+	}
+
+})(current, template, email, email_action, event);
+
+--------------------------------------------------------------------------------------------------------------
+Business rules:
+
+(function executeRule(current, previous /*null when async*/) {
+
+	// Add your code here
+	var appArray = [];
+	var element = new GlideRecord('cert_element');
+	element.addQuery('cert_task',current.sys_id);
+	element.query();
+	var count = element.getRowCount();
+	gs.info('xxyzCount is: ' + count);
+	gs.addInfoMessage('Count is: ' + count);
+	while(element.next()){
+		var docID = element.id.toString();
+		gs.info('xxyzElement ID: ' +docID);
+		appArray.push(docID);
+		//appArray.toString();
+	}
+	gs.info('xxyzthe array is: ' + appArray);
+	var i;
+	var appCount = new ArrayUtil().unique(appArray);
+	gs.info('xxyzthe length is:' + appCount.length);
+	for(i=0;i<appCount.length;i++){
+		gs.eventQueue("certification_task_application",current, appCount[i],current.sys_id);
+	}
+})(current, previous);
+
+
+
+Populate_Business_Application_name
+
+Testing approve inbound
+
+
+
+
+
+
+------------------------------------------------------------------------------------
+
+
+${assigned_to},
+
+A certification task that has been assigned to you/your group as part of the Data Certification and Management process requires attention.
+
+${mail_script:Populate_Business_Application_name}
+
+
+${mailto:mailto.approval1}
+
+${mailto:mailto.rejection1}
+
+${mailto:mailto.rejection3}
+
+${mailto:mailto.rejection2}
+
+
+-----------------------------------------------------------------------------------
+
+Meeting notes:
+
+verbiage will change
+can put App name, in the email subject with approve,or reject
+family-subcomponent,or (can be included in filter conditions)
+
+adding CIs and rejection case: for next show me
+
+1. Verbiage of the notification should change
+2. To include Application name alongwith Application ID in the reply email's subject
+3. Adding CIs Relation with the Business Application in the email
+4. Verify which roles can create/modify filter conditions of data certification
+
+
+
+
+Re:${sysapproval} - reject
+
+email.subject.indexOf("reject") >-1
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
