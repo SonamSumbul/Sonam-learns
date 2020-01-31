@@ -1,0 +1,33 @@
+	<div class="form-group">
+							<label class="control-label">Job location  <small class="requiredFeild">*</small> </label>
+							<div  ng-class="{'job_locationInv':job_locationInvTouched && formStep1.job_location.$error.required }" >
+								<input type="text" class="form-control"   id="job_location"  name="job_location" ng-model="job_location"    ng-required="true" autocomplete="off">
+							</div>
+--------------------------------------------------------------------------------------------------------------
+
+$scope.$selectJobLocation = $('#job_location').selectize({
+			valueField: 'id',
+			labelField: 'name',
+			searchField: 'name',
+			placeholder: "Search by name...",
+			options: $scope.data.locations,
+			create: false,
+			// maxItems: 1,
+			sortField: {
+				field: 'name',
+				direction: 'asc'
+			},
+			onBlur: function() {
+				$scope.job_locationInvTouched = true;
+			},
+			onChange:function(value){
+				// var value = $("#job_location option:selected").text();
+				if(value) {
+					// $scope.job_location_preview = this.getItem(value)[0].innerHTML;
+					
+				}
+			},
+			onItemAdd:function(value, $item){
+				$scope.job_location_preview.push(this.getItem(value)[0].innerHTML);
+			}
+		});

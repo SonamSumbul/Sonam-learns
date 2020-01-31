@@ -1,0 +1,37 @@
+As a sn_apm.apm_user, whenever I open business application form, I should be able to see the following sections with respective fields:
+- Retirement Solutions ( Changing R&I to Retirement Solutions as suggested by Sam in 20th dec,2019 email)
+    1. R&I Active Date 
+    2. R&I Strategic Application
+    3. R&I Strategy
+    4. R&I SRM tested
+    5. Tracc Business impact
+    6. R&I Leadership Team Owner
+
+- Owners
+    1. IT application owner
+    2. Business owner
+    3. Application architect
+    4. Development owner
+    5. Product director
+
+- Additional Details
+     All the custom fields other than the ones included in R&I
+
+
+Business Criticality field is present in Compliance tab
+Codebase field missing
+Should 'GDPR - Data Transfer Flag' field be in GDPR, it is in Security
+Security - Authentication Type missing
+Security - Transborder Countries is List collector but showing as Text field in excel
+'RS: Support - Type' field missing
+
+cannot find the following OOTB fields on business application form: 
+Status
+
+1/22/2020:cannot find the following OOTB field on business application form: 
+'Status' . 
+1/23/2020: Status field is the Status(operational status) field on business application form as confirmed by Manisha
+
+
+1/22/2020: Not able to view Business Subunit field on business application form.
+1/23/2020: Business Subunit field is actually Business Unit Subdivision field on business application form

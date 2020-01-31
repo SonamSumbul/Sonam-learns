@@ -1,0 +1,387 @@
+(function runMailScript( /* GlideRecord */ current, /* TemplatePrinter */ template,
+    /* Optional EmailOutbound */
+    email, /* Optional GlideRecord */ email_action,
+    /* Optional GlideRecord */
+    event) {
+
+    var tableString;
+    /*var grCi = new GlideRecord('cmdb_rel_ci');
+    grCi.addQuery('parent',current.id);
+    //grCi.addEncodedQuery('parent.nameSTARTSWITHMap software models^child.sys_class_name=cmdb_ci_service');
+    //grCi.addEncodedQuery('parent ='+ current.id + '^child.sys_class_name=cmdb_ci_service');
+    grCi.query();
+    gs.info('items cis found ' + grCi.getRowCount() + ' -- ' + current.id + '-- ' + current.getDisplayValue('id'));
+    var items = [];
+    if(grCi.next()){ 
+
+    	items.push( 
+    		grCi.getDisplayValue('child') 
+    	);
+    }*/
+
+    /* var bs = new GlideRecord('cmdb_ci_service');
+     bs.addQuery('u_application_name', current.sys_id);
+     bs.query();
+     gs.info('app name' + current.sys_id);
+     while (bs.next()) {
+         bs.getDisplayValue('u_application_name');
+     }*/
+
+    var appID = event.parm1;
+
+    var gr = new GlideRecord('cert_element');
+    //gr.addEncodedQuery('cert_task='+current.cert_task+'^element=active^original_value=true');
+    gr.addEncodedQuery('cert_task=' + current.sys_id + '^id=' + appID);
+    //gr.addQuery('cert_task', current.sys_id);
+    gr.query();
+
+    if (gr.next()) {
+        tableString = gr.id.getDisplayValue('name') + '<br><br><br>';
+        //gs.info("Testing abc" + gr.id);
+
+        var gr1 = new GlideRecord('cert_element');
+        gr1.addEncodedQuery('cert_task=' + current.sys_id + '^id=' + gr.id);
+        //gr.addQuery('cert_task', current.sys_id);
+        gr1.query();
+
+        tableString += '<table border="1"><thead><tr><th>Certification Element</th><th>Value</th></tr></thead><tbody>';
+        while (gr1.next()) {
+            var name = gr1.getDisplayValue('element');
+            var value = "id." + name;
+            var data = gr1.getDisplayValue(value);
+            gs.info('inbound = ' + data);
+            if (!data) {
+                data = '-';
+                //if(data == ''){
+                //}
+            }
+            tableString += '<tr><td>' + gr1.getElement(value).getLabel() + '</td><td>' + data + '</td></tr>';
+            gr1.update();
+
+        }
+    }
+    tableString += '</tbody></table>';
+    /*	tableString += '<p> Related configuration Items </p>';
+    		for(var t = 0 ; t < items.length ; t++ ){
+    			tableString += '<p> '+items[t]+' </p>' ;
+    template.print(tableString);
+    		}*/
+    //template.print(tableString);
+
+    template.print(tableString);
+
+        //software models
+        var grRel = new GlideRecord('cmdb_rel_ci');
+        grRel.addQuery('type', '41008aa6ef32010098d5925495c0fb94');
+        grRel.addQuery('parent.sys_class_name', 'cmdb_ci_business_app');
+        grRel.addQuery('child.sys_class_name', 'INSTANCEOF', 'cmdb_ci_service');
+        grRel.addQuery('parent', appID);
+        grRel.query();
+        while (grRel.next()) {
+
+
+
+            var grSWM = new GlideRecord('sn_apm_tpm_service_software_model');
+            grSWM.addQuery('business_service', grRel.child);
+            grSWM.query();
+            while (grSWM.next()) {
+                template.print('<p>'+'Service:' + grRel.child.name+'</p>');
+                template.print('<p>'+'Software models:' + grSWM.software_model.display_name+'</p>');
+            }
+
+
+        }
+
+    
+ 
+
+
+})(current, template, email, email_action, event);
+------------------------------------------------------------------------------------------------------------------------------------------------------------
+Inbound email - Reassign certification task for data inaccuracy
+
+*********
+
+(function runAction(/*GlideRecord*/ current, /*GlideRecord*/ event, /*EmailWrapper*/ email, /*ScopedEmailLogger*/ logger, /*EmailClassifier*/ classifier) {
+
+	/*var x = current.cert_task;
+	var gr = new GlideRecord('cert_task');
+	gr.addQuery('sys_id',x);
+	gr.query();
+	while(gr.next()){
+		//gr.state = 4;    //Closed Incomplete 
+		gr.assigned_to = 'fb5fcc5bdbb0bf8c5f1d0bc7f49619da'; //Product Director (Sonam Naroola) ,user for testing
+		gr.work_notes = 'Certification element failed. Task moved to incomplete';
+		gr.update();
+	}
+	
+	current.state = "Failed";
+	current.update();*/
+	
+	var  emailSub = email.subject;
+	var appArray = emailSub.split('-');
+	gs.info('the array is now: ' + appArray + 'array: ' + appArray[1]);
+	
+	var busApp = new GlideRecord('cmdb_ci_business_app');
+	busApp.addQuery('u_id',appArray[1]);
+	busApp.query();
+	if(busApp.next()){
+		var appID = busApp.sys_id;
+		//var appID = busApp.name + ':' + busApp.sys_id;
+		var appName = busApp.u_id;
+	}
+	gs.info('Logging current rec id 3 appArray[1] = '+ appArray[1] + 'appsys_id = ' +  appID  + '^id=' + appName );
+	// Implement email action here
+	var gr  = new GlideRecord('cert_element');
+	//gr.addQuery('cert_task',current.sys_id);
+	//gr.addQuery('id',current.id);
+	gr.addEncodedQuery('cert_task='+ current.sys_id + '^id=' + appID);
+	gr.query();
+	gs.info('xxsuccess 2' + appID);
+	while(gr.next()){
+		gr.setValue('state','Pending');
+		gr.update();
+	}
+	current.assigned_to = '6249b5e94f888f08161144f18110c7ac';
+	current.work_notes = email.body_text;
+	gs.log('appx' + JSON.stringify((email)));
+	current.update();
+	gs.info('Logging current rec id x ' + current.sys_id  + '^id=' + gr.id );
+})(current, event, email, logger, classifier);
+
+*********************************************************************************************************************************************************
+Inbound email - Close Certification task
+
+(function runAction(/*GlideRecord*/ current, /*GlideRecord*/ event, /*EmailWrapper*/ email, /*ScopedEmailLogger*/ logger, /*EmailClassifier*/ classifier) {
+
+var  emailSub = email.subject;
+	var appArray = emailSub.split('-');
+	gs.info('the array is: ' + appArray + 'array: ' + appArray[1]);
+	var busApp = new GlideRecord('cmdb_ci_business_app');
+	busApp.addQuery('u_id',appArray[1]);
+	busApp.query();
+	if(busApp.next()){
+		var appID = busApp.sys_id;
+		var appName = busApp.u_id;
+	
+	gs.info('Logging current rec id 2 appArray[1] = '+ appArray[1] + 'appsys_id = ' +  appID  + '^id=' + appName );
+	// Implement email action here
+	var gr  = new GlideRecord('cert_element');
+	//gr.addQuery('cert_task',current.sys_id);
+	//gr.addQuery('id',current.id);
+	gr.addEncodedQuery('cert_task='+ current.sys_id + '^id=' + appID);
+	gr.query();
+	gs.info('xxsuccess ' + appID);
+	while(gr.next()){
+		gr.setValue('state','Certified');
+		gr.update();
+	}
+	gs.info('Logging current rec id ' + current.sys_id  + '^id=' + gr.id );
+	//current.state = 3;
+	//current.percent_complete = 100;
+	//current.update();
+
+}})(current, event, email, logger, classifier);
+
+******************************************************************************************************************************************
+Schedule Job - (INRY) Notify Business Application owner for data certification
+
+//This Scheduled Job will run once a year for Data Certification Schedule. Once the Certification Schedule for Business Application has been executed, this schedule job runs to trigger notifications to Business Application owners for their assigned Certification tasks.
+var answer =false;
+var today = gs.now();
+var certtask = new GlideRecord('cert_task');
+certtask.orderByDesc('sys_created_on');
+//certtask.setLimit(2);
+certtask.query();
+while(certtask.next()){
+	var abc = certtask.sys_created_on;
+	var dt = new GlideDateTime(abc);
+    var dat = dt.getDate();
+	if(dat==today){
+		answer = true;
+		var appArray = [];
+	var element = new GlideRecord('cert_element');
+	element.addQuery('cert_task',certtask.sys_id);
+	element.query();
+	//gs.sleep(30000);
+	var count = element.getRowCount();
+	gs.info('xxyzCount is: ' + count);//count of cert elements for the tasks
+	//gs.addInfoMessage('Count is: ' + count);
+	while(element.next()){
+		var docID = element.id.toString();
+		gs.info('xxyzElement ID: ' +docID);//sys id of the business application from id
+		appArray.push(docID);
+		//gs.eventQueue("certification_task_application",current);
+		//appArray.toString();
+	}
+	gs.info('xxyzthe array is: ' + appArray);//sys ids of all the business applications in an array
+	var i;
+	var appCount = new ArrayUtil().unique(appArray);
+	gs.info('xxyzthe length is:' + appCount.length);//picks the unique sys ids of business applications from the array and returns length of array
+	for(i=0;i<appCount.length;i++){
+		//var appName = getDisplayValue(appCount[i]);
+		var busApp = new GlideRecord('cmdb_ci_business_app');
+		busApp.addQuery('sys_id',appCount[i]);
+		busApp.query();
+		if(busApp.next()){
+			var appID = busApp.u_id;
+			var appName = busApp.name;
+			var appl = appID + '-' + appName;
+		}
+		
+		gs.info('xxsuccess' + appCount[i].getDisplayValue('appName'));
+		gs.info('to rest in peace' + appID );
+		gs.info('application name is'+ appName);
+		gs.eventQueue("certification_task_application",certtask, appCount[i],appl);
+	}
+
+	}
+	else{
+		answer =false;
+	}
+}
+
+
+
+
+
+
+//Business rule logic
+
+
+--------------------------------------------------------------------------------------------------------------------------------------------------------
+
+mail script - 17th jan
+
+//This Email Script displays the name and value of the Certification Elements in a table in the notification and it also displays the Business Services and their Software models for a Business Application
+
+(function runMailScript( /* GlideRecord */ current, /* TemplatePrinter */ template,
+    /* Optional EmailOutbound */
+    email, /* Optional GlideRecord */ email_action,
+    /* Optional GlideRecord */
+    event) {
+
+    var tableString; //To print the name and value of Certification elements in a table in notification
+    var appID = event.parm1; //sys_id of Business Applications
+
+    // To get the certification tasks and the related Business Application from the Certification Element
+    var task_cert = new GlideRecord('cert_element');
+    task_cert.addEncodedQuery('cert_task=' + current.sys_id + '^id=' + appID);
+    task_cert.query();
+    if (task_cert.next()) {
+        tableString = task_cert.id.getDisplayValue('name') + '<br><br><br>'; //prints the name of the Certification element
+
+        //To get the name and value of the Certification elements 
+        var task_element = new GlideRecord('cert_element');
+        task_element.addEncodedQuery('cert_task=' + current.sys_id + '^id=' + task_cert.id);
+        task_element.query();
+        tableString += '<table border="1"><thead><tr><th>Certification Element</th><th>Value</th></tr></thead><tbody>'; //prints the heading of the table in the notification
+
+        while (task_element.next()) {
+            var name = task_element.getDisplayValue('element'); //stores label of the element
+            var value = "id." + name; //stores value of the corresponding element
+            var data = task_element.getDisplayValue(value); //displays the value of the corresponding element
+            if (!data) {
+                data = '-'; //Display '-' if no data is present for the certification element
+            }
+            tableString += '<tr><td>' + task_element.getElement(value).getLabel() + '</td><td>' + data + '</td></tr>'; //prints the value of the Certification elements in the table
+            task_element.update();
+        }
+    }
+    tableString += '</tbody></table>';
+    template.print(tableString);
+
+    
+	template.print('<p><strong>Associated Softwares:</strong></p>');
+	var grRel = new GlideRecord('cmdb_software_instance');
+	grRel.addQuery('installed_on',appID);
+	grRel.query();
+	while(grRel.next()){
+	
+      template.print('<p>'+ grRel.software.name + '</p>'); //prints the related software model
+	}
+})(current, template, email, email_action, event);
+
+
+
+
+My action items will be:
+
+1. Test transition to APM in personal dev with Manisha
+2. Client Instance changes for Data Certification 
+3. Work on the Process flow document
+
+
+************************************************************************************************************************************************************
+
+mail script:20th jan
+
+
+//This Email Script displays the name and value of the Certification Elements in a table in the notification and it also displays the Business Services and their Software models for a Business Application
+
+(function runMailScript( /* GlideRecord */ current, /* TemplatePrinter */ template,
+    /* Optional EmailOutbound */
+    email, /* Optional GlideRecord */ email_action,
+    /* Optional GlideRecord */
+    event) {
+
+    var tableString; //To print the name and value of Certification elements in a table in notification
+    var appID = event.parm1; //sys_id of Business Applications
+
+    // To get the certification tasks and the related Business Application from the Certification Element
+    var task_cert = new GlideRecord('cert_element');
+    task_cert.addEncodedQuery('cert_task=' + current.sys_id + '^id=' + appID);
+    task_cert.query();
+    if(task_cert.next()) {
+        tableString = task_cert.id.getDisplayValue('name') + '<br><br><br>'; //prints the name of the Certification element
+
+        //To get the name and value of the Certification elements 
+        var task_element = new GlideRecord('cert_element');
+        task_element.addEncodedQuery('cert_task=' + current.sys_id + '^id=' + task_cert.id);
+        task_element.query();
+        tableString += '<table border="1"><thead><tr><th>Certification Element</th><th>Value</th></tr></thead><tbody>'; //prints the heading of the table in the notification
+
+        while(task_element.next()) {
+            var name = task_element.getDisplayValue('element'); //stores label of the element
+            var value = "id." + name; //stores value of the corresponding element
+            var data = task_element.getDisplayValue(value); //displays the value of the corresponding element
+            if(!data) {
+                data = '-'; //Display '-' if no data is present for the certification element
+            }
+            tableString += '<tr><td>' + task_element.getElement(value).getLabel() + '</td><td>' + data + '</td></tr>'; //prints the value of the Certification elements in the table
+            task_element.update();
+        }
+    }
+    tableString += '</tbody></table>';
+    template.print(tableString);
+
+    //software models
+	template.print('<p><strong>Associated Softwares:</strong></p>');
+    var grRel = new GlideRecord('cmdb_rel_ci');
+    grRel.addQuery('type', 'cb5592603751200032ff8c00dfbe5d17');// type uses:used by
+    grRel.addQuery('parent.sys_class_name', 'cmdb_ci_business_app');
+    grRel.addQuery('child.sys_class_name', 'cmdb_ci_spkg');
+    grRel.addQuery('parent', appID);
+    grRel.query();
+    while(grRel.next()) {
+		template.print('<p>'+ grRel.child.name + '</p>'); //prints the related software model
+		
+//         var grSWM = new GlideRecord('sn_apm_tpm_service_software_model');
+//         grSWM.addQuery('business_service', grRel.child);
+//         grSWM.query();
+//         while(grSWM.next()) {
+//             template.print('<p>' + 'Service:' + grRel.child.name + '</p>');
+//             template.print('<p>' + 'Software models:' + grSWM.software_model.display_name + '</p>');
+//         }
+    }
+
+
+    /*template.print('<p><strong>Associated Softwares:</strong></p>');
+	var grRel = new GlideRecord('cmdb_software_instance');
+	grRel.addQuery('installed_on',appID);
+	grRel.query();
+	while(grRel.next()){
+	
+      template.print('<p>'+ grRel.software.name + '</p>'); //prints the related software model
+	}*/
+})(current, template, email, email_action, event);

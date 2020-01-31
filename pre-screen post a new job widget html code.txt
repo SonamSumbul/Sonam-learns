@@ -1,0 +1,365 @@
+Html
+--------------------------------------------------------
+
+<!-- Angular ui datepicker -->
+<script src="//angular-ui.github.io/bootstrap/ui-bootstrap-tpls-2.0.1.js"></script>
+<!-- date picker ends -->
+
+<div class="breadCrumb clickable">
+	<a href="?id=job_setup">
+	<i class="glyphicon glyphicon-circle-arrow-left minBreadcrumbPadRight"></i> Back to Job Setup </a>
+</div>
+
+<div class="atsOuterBlock containerRight">
+	<div class="col-md-12 boxShade new_job_posting jobReqMinHeight marginMinBtmReq">
+		<div class="nav-tabs-postjob">
+			<!-- Nav tabs -->
+			<ul class="nav nav-tabs" role="tablist">
+				<li role="presentation" ng-click="selectTab(1)" ng-class="{'steps_few': data.isHiringManger == true}"  >
+					<a href="javascript:void(0);" ng-class="{active:isActive(1)}">Job Request </a>
+				</li>
+				<li role="presentation" ng-click="formStep1.$valid ? selectTab(2) : ''" ng-class="{'steps_few': data.isHiringManger == true}" >
+					<a href=" javascript:void(0); " ng-class="{active:isActive(2)}">Add Description </a>
+				</li>
+				<li ng-if="!data.isHiringManger" ng-click="formStep1.$valid && formStep2.$valid ? selectTab(3) : ''" role="presentation " >
+					<a href="javascript:void(0); " ng-class="{active:isActive(3)}">Set Up Stages </a>
+				</li>
+				<li ng-click="formStep1.$valid && formStep2.$valid && formStep3.$valid ? selectTab(4)  : ''" role="presentation "  ng-class="{'steps_few': data.isHiringManger == true}" >
+					<a href="javascript:void(0); " ng-class="{active:isActive(4)}">Review </a>
+				</li>
+			</ul>
+			<!-- Tab panes -->
+			<div ng-show="isActive(1)">
+				<form class="formStep1" name="formStep1">
+					<div class="jobRequestBlock paddingAddJob col-md-12  ">
+					</div>  
+					<div class="col-md-6  ">
+						<div class="form-group">
+							<label class="control-label">Job Title <small class="requiredFeild">*</small></label>
+							<input type="text "  ng-maxlength="100" class="form-control " name="job_title" ng-model="job_title " id="job_title"
+							placeholder="Enter job title "   ng-required="true" />
+							<small ng-show="formStep1.job_title.$error.required && formStep1.job_title.$touched" class="errorMsg ">Please complete this required field.</small>
+							<small ng-show="formStep1.job_title.$error.maxlength && formStep1.job_title.$dirty && formStep1.job_title.$touched"
+							class="errorMsg ">Maximum 100 characters</small>
+						</div>
+						<div class="form-group">
+							<label class="control-label">Job Department <small class="requiredFeild">*</small> </label>
+							<select class="form-control " name="jobDepartment" ng-model="jobDepartment " id="jobDepartment"  ng-options="option.id as option.name for option in data.departments" ng-init="jobDepartment ? jobDepartment : jobDepartment = ''" ng-blur="changeDepartment()"  ng-change="changeDepartment()"  ng-required="true">
+							</select>
+							<small ng-show="formStep1.jobDepartment.$error.required && formStep1.jobDepartment.$touched" class="errorMsg ">Please complete this required field.</small>
+						</div>
+						<div class="form-group">
+							<label class="control-label">No Of Positions 
+							<small class="requiredFeild">*</small> </label>
+							<input type="number" min="1" class="form-control" name="no_of_positions" id="no_of_positions" ng-model="no_of_positions"  placeholder="Enter number of positions"    ng-required="true" />
+							<small ng-show="formStep1.no_of_positions.$error.required && formStep1.no_of_positions.$touched" class="errorMsg ">Please complete this required field.</small>
+						</div>
+						<div class="form-group">
+							<label class="control-label">Average Salary / Fee (Per Annum)</label>
+							<input type="number" min="1" max="9999999999" maxlength="10" class="form-control" ng-model="salary" id="salary" name="salary"  placeholder="100000">
+						</div>
+						<div class="form-group">
+							<label class="control-label">Employment Type </label>
+							<select class="form-control " name="employmentType" ng-model="employmentType " id="employmentType"  ng-options="option.id as option.name for option in data.empTypes"
+							ng-init="employmentType ? employmentType : employmentType = ''" ng-change="checkContractPeriodRequiredOrNot()" >
+							</select>
+						</div>
+						<div class="form-group" ng-if="data.contract_period_requied_flag == 'true'">
+							<label class="control-label"> Valid Up to (in months) <small class="requiredFeild">*</small></label>
+							<input type="number" min="1" max="99" maxlength="2" class="form-control" name="contract_period" id="contract_period" ng-model="$parent.contract_period"  placeholder="1"  ng-required="true"   />
+							<small ng-show="formStep1.contract_period.$error.required && formStep1.contract_period.$touched" class="errorMsg ">Please complete this required field.</small>
+						</div>
+						<div class="form-group">
+							<label class="control-label">Posting Type <small class="requiredFeild">*</small> </label>
+							<select class="form-control " name="postingType" ng-model="postingType " id="postingType"  ng-options="option.value as option.label for option in data.postingTypes" ng-init="postingType ? postingType : postingType = ''"  ng-required="true">
+							</select>
+							<small ng-show="formStep1.postingType.$error.required && formStep1.postingType.$touched" class="errorMsg ">Please complete this required field.</small>
+						</div>
+						<div class="form-group">
+							<label class="control-label">Requested Type  <small class="requiredFeild">*</small>  </label>
+							<select class="form-control " name="requestedType" ng-model="requestedType " id="requestedType"  ng-options="option.value as option.label for option in data.requestedTypes" ng-init="requestedType ? requestedType : requestedType =  ''"   ng-required="true">
+							</select>
+							<small ng-show="formStep1.requestedType.$error.required && formStep1.requestedType.$touched" class="errorMsg ">Please complete this required field.</small>
+						</div>
+						<div class="form-group" ng-if="requestedType == '2'">
+							<label class="control-label">Justification Details <small class="requiredFeild">*</small>  </label>
+							<input type="text" name="justificationDetails" ng-model="$parent.justificationDetails" id="justificationDetails" class="form-control" placeholder="Enter justification"   ng-required="true">
+							<small ng-show="formStep1.justificationDetails.$error.required && formStep1.justificationDetails.$touched" class="errorMsg ">Please complete this required field.</small>
+						</div>
+						<div class="form-group" ng-if="requestedType == '3'">
+							<label class="control-label"> Replacement Details  <small class="requiredFeild">*</small>  </label>
+							<input type="text" name="replacementDetails" ng-model="$parent.replacementDetails" id="replacementDetails" class="form-control" placeholder="Enter replacement details"  ng-required="true" >
+							<small ng-show="formStep1.replacementDetails.$error.required && formStep1.replacementDetails.$touched" class="errorMsg ">Please complete this required field.</small>
+						</div>
+            <!-- Reward section starts here -->
+                    <div class="form-group">
+									<label for="exampleFormControlTextarea1">Can this job be referred?</label>
+									<div class="checkBoxMargin">
+										<center>
+											<label class="switch col-sm-6  ">
+												<input id='all' ng-model="all"  type="checkbox">
+												<span class="slider round"></span>
+                       
+											</label>
+										</center>
+									</div>
+                       <div class="form-group" ng-if="all == true">
+							<label class="control-label">Reward points<small class="requiredFeild">*</small>  </label>
+							<input type="number" min="1"name="rewardPoints" ng-model="rewardPoints" id="rewardPoints" class="form-control" placeholder="Enter Reward points"   ng-required="true">
+							<small ng-show="formStep1.rewardPoints.$error.required && formStep1.rewardPoints.$touched" class="errorMsg ">Please complete this required field.</small>
+						</div> 
+								</div>
+            <!-- Reward section ends here -->
+					</div>
+					<div class="col-md-6  ">
+						<div class="form-group" style="position: relative;">
+							<label class="control-label">Job Category </label>
+							<select class="form-control " name="jobCategory" ng-model="jobCategory " id="jobCategory"  ng-options="option.id as option.name for option in data.jobCategories" ng-init="jobCategory ? jobCategory : jobCategory =  ''">
+							</select>
+							<small class="text-muted color-blue no_jobs" ng-if="data.jobCategories.length <= 1">currently no categories are available</small>
+						</div>
+						<div class="form-group">
+							<label class="control-label">Job Grade </label>
+							<select class="form-control " name="jobGrade" ng-model="jobGrade " id="jobGrade"  ng-options="option.value as option.label for option in data.jobGrades" ng-init="jobGrade ? jobGrade :  jobGrade = ''">
+							</select>
+						</div>
+						<div class="form-group">
+							<label class="control-label">Target Hiring Date  
+							<small class="requiredFeild">*</small>  </label>
+							<p class="input-group" id="hiring_date" >
+								<input datepicker-options="dateOptions" type="text" class="form-control" ng-model="hiring_date" 
+								is-open="config1.opened"  uib-datepicker-popup="yyyy-MM-dd" 
+								close-text="Close"  name="hiring_date"   ng-required="true" show-button-bar="false"  />
+								<span class="input-group-btn">
+									<button type="button" class="btn btn-default" ng-click="open1($event)">
+										<i class="glyphicon glyphicon-calendar"></i>
+									</button>
+								</span>
+							</p>
+							<small ng-show="formStep1.hiring_date.$error.required && formStep1.hiring_date.$touched " class="errorMsg ">Please complete this required field.</small>
+							<small ng-show="formStep1.hiring_date.$invalid && !formStep1.hiring_date.$error.required " class="errorMsg ">Please enter valid date (YYYY-MM-DD).</small>
+						</div>
+						<div class="form-group">
+							<label class="control-label">Target Expiry Date 
+							</label>
+							<p class="input-group" id="expiry_date" >
+								<input ng-class="expiryDateValidCheck == true ? 'manReq':''" datepicker-options="dateOptions" type="text" class="form-control" ng-model="expiry_date" 
+								is-open="config2.opened"  uib-datepicker-popup="yyyy-MM-dd" 
+								close-text="Close"  name="expiry_date" show-button-bar="false" />
+								<span class="input-group-btn">
+									<button type="button" class="btn btn-default" ng-click="open2($event)">
+										<i class="glyphicon glyphicon-calendar"></i>
+									</button>
+								</span>
+							</p>
+							<span ng-if="formStep1.expiry_date.$modelValue < formStep1.hiring_date.$modelValue ? invalidExp(): validExp()" ></span>
+							<small ng-show="formStep1.expiry_date.$invalid && formStep1.expiry_date.$touched " class="errorMsg ">Please enter valid date (YYYY-MM-DD).</small>
+							<small ng-show="formStep1.expiry_date.$modelValue < formStep1.hiring_date.$modelValue" class="errorMsg ">Expiry Date should not be a older than Target Hiring Date.</small>
+						</div>
+						<div class="form-group">
+							<label class="control-label">Job location  <small class="requiredFeild">*</small> </label>
+							<div  ng-class="{'job_locationInv':job_locationInvTouched && formStep1.job_location.$error.required }" >
+								<input type="text" class="form-control"   id="job_location"  name="job_location" ng-model="job_location"    ng-required="true" autocomplete="off">
+							</div>
+							<small ng-show="formStep1.job_location.$error.required && job_locationInvTouched" class="errorMsg ">Please complete this required field.</small>
+						</div>
+						<span ng-hide="data.isHiringManger">
+							<div class="form-group">
+								<label class="control-label">Assign To (Recruiter)<small class="requiredFeild">*</small> </label>
+								<div  ng-class="{'selectUserInv':selectedUserTouched && formStep1.selectUser.$error.required }">
+									<input type="text" class="form-control"   id="selectUser"  name="selectUser" ng-model="selectUser"    ng-required="data.isHiringManger ?  false : true" autocomplete="off">
+								</div>
+								<small ng-show="formStep1.selectUser.$error.required && selectedUserTouched" class="errorMsg ">Please complete this required field.</small>
+							</div>
+							<div class="form-group">
+								<label class="control-label">Hiring Manager <small class="requiredFeild">*</small> </label>
+								<div  ng-class="{'hiringManagerInv':hiringManagerInvTouched && formStep1.hiringManager.$error.required }" >
+									<input type="text" class="form-control"   id="hiringManager"  name="hiringManager" ng-model="hiringManager" ng-required="data.isHiringManger ?  false : true" autocomplete="off">
+								</div>
+								<small ng-show="formStep1.hiringManager.$error.required && hiringManagerInvTouched" class="errorMsg ">Please complete this required field.</small>
+							</div>
+						</span>
+					</div>
+					<div class="col-md-12 text-right">
+						<button ng-disabled="formStep1.$valid == false" type="button" class="btn  btn-sm  buttonNext btnMar" ng-click="selectTab(2)">Next</button>
+					</div>
+				</form>
+			</div>
+		</div>
+		<div ng-show="isActive(2)">
+			<form name="formStep2" class="formStep2">
+				<div class="jobRequestBlock paddingAddJob col-md-12  ">
+					<div class="col-md-6 ">
+						<div class="form-group">
+							<label class="control-label">Skills <small class="requiredFeild">*</small>   </label>
+							<div  ng-class="{'selectSkillInv':selectSkillInvTouched && formStep2.selectSkill.$error.required }" >
+								<input type="text" class="form-control" id="selectSkill"  name="selectSkill" ng-model="selectSkill"    ng-required="true">
+							</div>
+              <div class="form-group">
+							<label class="control-label">Pre-Screening Questions  <small class="requiredFeild">*</small> </label>
+							<div  ng-class="{'job_locationInv':job_locationInvTouched && formStep1.job_location.$error.required }" >
+								<input type="text" class="form-control"   id="pre-screen"  name="pre-screen" ng-model="pre-screen"    ng-required="true" autocomplete="off">
+							</div>
+							<small ng-show="formStep2.selectSkill.$error.required && selectSkillInvTouched" class="errorMsg ">Please complete this required field.</small>
+						</div>
+          </div>
+					<div class="col-md-6">
+						<div class="form-group">
+							<label class="control-label">Experience Required </label>
+							<select class="form-control" name="experience"  id="experience" ng-model="experience" ng-options="option.value as option.label for option in data.experienceList | orderBy: 'value'" ng-init="experience ? experience : experience = ''" ng-blur="changeExperience()"  ng-change="changeExperience()">
+							</select>
+							<small ng-show="formStep2.experience.$error.required && formStep2.experience.$touched" class="errorMsg ">Please complete this required field.</small>
+						</div>
+						<div class="form-group">
+							<label class="control-label">Qualification Required </label>
+							<select class="form-control" name="education" id="education" ng-model="education" ng-options="option.value as option.label for option in data.eduList | orderBy: 'value'" ng-init="education ? education :  education = ''">
+							</select>
+							<small ng-show="formStep2.education.$error.required && formStep2.education.$touched" class="errorMsg ">Please complete this required field.</small>
+						</div>
+					</div>
+					<div class="col-md-12">
+						<div class="form-group">
+							<label class="control-label">Job Description <small class="requiredFeild">*</small> </label>
+							<div  ng-class="{'job_descriptionInv':job_descriptionInvTouched && formStep2.job_description.$error.minlength }" >
+								<textarea class="form-control" ng-minlength="10" name="job_description" ng-model="job_description" id="job_description" rows="15"   ng-required="true"></textarea>
+							</div>
+							<small ng-show="formStep2.job_description.$error.required && job_descriptionInvTouched" class="errorMsg ">Please complete this required field.</small>
+							<small ng-show="formStep2.job_description.$error.minlength && job_descriptionInvTouched "
+							class="errorMsg ">At least 10 characters required.</small>
+						</div>
+					</div>
+					<div class="col-md-12 text-right">
+						<button type="button" class="btn btn-sm buttonBack btnMar" ng-click="selectTab(1)">Back</button>
+						<button ng-disabled="formStep2.$valid == false" type="button" class="btn  btn-sm  buttonNext  btnMar" ng-click="data.isHiringManger ? selectTab(4) : selectTab(3)">Next</button>
+					</div>
+				</div>
+			</form>
+		</div>
+		<div ng-show="isActive(3)">
+			<form name="formStep3" class="formStep3">
+				<div class="jobRequestBlock">
+					<div class="col-sm-12 col-xs-12">
+						<div class="jobStageAdder " id="aplicantReviewStage">
+							<div class="stageTitle">
+								Initial Screening
+							</div>
+							<div class="flexUsersDynamic">
+								<div class="col-md-12 col-xs-12">
+									<div class="col-md-6 col-sm-6 col-xs-12">
+										<label class="control-label">Interviewer Name<small class="requiredFeild">*</small></label>
+										<input type="text"  class="form-control" id="initialScreeningUser" ng-modal="initialScreeningUser" name="initialScreeningUser" >
+									</div>
+									<div class="col-md-6 col-sm-6 col-xs-12">
+										<label class="control-label">Interview Template<small class="requiredFeild">*</small></label>
+										<select  class="form-control" id="templatesForInitialScreening" ng-modal="templatesForInitialScreening" name="templatesForInitialScreening" ></select>
+									</div>
+								</div>
+							</div>
+						</div>
+						<div class="jobStageAdder " id="phoneInterviewStage">
+							<div class="stageTitle">
+								Technical / Functional Interview
+							</div>
+							<div class="flexUsersDynamic">
+								<div class="col-md-12 col-xs-12">
+									<div class="col-md-6 col-sm-6 col-xs-12">
+										<label class="control-label">Interviewer Name<small class="requiredFeild">*</small></label>
+										<input type="text"   class="form-control" id="technicalFunctionalInterviewUser" ng-modal="technicalFunctionalInterviewUser" name="technicalFunctionalInterviewUser" >
+									</div>
+									<div class="col-md-6 col-sm-6 col-xs-12">
+										<label class="control-label">Interview Template<small class="requiredFeild">*</small></label>
+										<select class="form-control" id="templatesForTechincal" ng-modal="templatesForTechincal" name="templatesForTechincal" ></select>
+									</div>
+								</div>
+							</div>
+						</div>
+						<div class="jobStageAdder " id="writtenTestStage">
+							<div class="stageTitle">
+								HR Interview
+							</div>
+							<div class="flexUsersDynamic"> 
+								<div class="col-md-12 col-sm-12">
+									<div class="col-md-6 col-sm-6 col-xs-12">
+										<label class="control-label">Interviewer Name<small class="requiredFeild">*</small></label>
+										<input type="text"   class="form-control" id="hrInterviewUser" ng-modal="hrInterviewUser" name="hrInterviewUser" >
+									</div>
+									<div class="col-md-6 col-sm-6 col-xs-12">
+										<label class="control-label">Interview Template<small class="requiredFeild">*</small></label>
+										<select class="form-control" id="templatesForHr" ng-modal="templatesForHr" name="templatesForHr" ></select>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="col-md-12 col-sm-12 text-right ">
+						<button type="button" class="btn btn-sm buttonBack btnMar" ng-click="selectTab(2)">Back</button>
+						<button type="button" ng-disabled="formStep3.$valid == false" class="btn  btn-sm  buttonNext btnMar" ng-click="selectTab(4)">Next</button>
+					</div>
+				</div>
+			</form>
+		</div>
+		<div ng-show="isActive(4)">
+			<form name="formStep4" class="formStep4">
+				<div class="jobRequestBlock">
+					<div class="col-md-10 col-md-offset-1 jobRequestMargin">
+						<div class="jobReview row boxShade ">
+							<div class="jobreviewTitle">
+								{{job_title ? job_title : 'Please write your job title'}}
+							</div>
+							<div class="col-md-7" id="job_description_preview">
+							</div>
+							<div class="col-md-5 minJobDetails">
+								<label class="minLable">Job Details: </label>
+								<table class="table-striped job_details col-xs-12">
+									<tbody>
+										<tr>
+											<td>Posted On: </td>
+											<td>{{postDate | date:'yyyy-MM-dd'}}</td>
+										</tr>
+										<tr>
+											<td>Experience Level: </td>
+											<td>{{experience_preview ? experience_preview : '-' }}</td>
+										</tr>
+										<tr>
+											<td>Location: </td>
+											<td>
+												<span ng-if="!job_location_preview"> -- </span>
+												<span ng-if="job_location_preview.length" > 
+													<ul>
+														<li ng-repeat="location in job_location_preview ">{{location}} </li>
+													</ul>
+												</span>
+											</td>
+										</tr>
+										<tr>
+											<td>Department: </td>
+											<td>{{jobDepartment_preview  ? jobDepartment_preview : '-'}}</td>
+										</tr>
+										<tr>
+											<td>No Of Positions: </td>
+											<td>{{no_of_positions ? no_of_positions : '-'}}</td>
+										</tr>
+									</tbody>
+								</table>
+							</div>
+						</div>
+						<div class="col-md-12 text-right">
+							<button type="button" class="btn btn-sm buttonBack btnMar" ng-click="data.isHiringManger ? selectTab(2) : selectTab(3)">Back</button>
+							<button ng-disabled="formStep4.$valid == false || formStep4.sheduleDateInput1.$valid == false" type="button" id="submitButton" class="btn  btn-sm  btnMar buttonNext" ng-click="submitJob()">Submit</button>
+						</div>
+					</div>
+				</div>
+			</form>
+		</div>
+		<!-- Modal start-->
+		<div class="modal fade" id="myModal" role="dialog">
+			<div class="modal-dialog modal-lg">
+				<div class="modal-content">
+					<div class="modal-body text-center modalMargins" id="moadlDynamicData">
+					</div>
+				</div>
+			</div>
+		</div>
+		<!-- Modal end-->
+	</div>
+</div>				

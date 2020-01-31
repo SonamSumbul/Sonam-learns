@@ -1,0 +1,121 @@
+name   value
+element name   element value
+10 elements are there
+This application is no longer in use (AON APM team to follow up for retirement date)
+mailto.approval2
+No, I am no longer the owner of this application (AON APM team to follow up)
+mailto.rejection2
+(INRY) - STRY0137293_AR_20191210_GLOBAL
+Hey this is a test notification
+${assigned_to},
+
+A certification task that has been assigned to you/your group as part of the Data Certification and Management process requires attention.
+
+${mail_script:Populate_Business_Application_name}
+
+ 
+ 
+
+${mailto:mailto.approval1}
+
+${mailto:mailto.rejection1}
+
+${mailto:mailto.approval2}
+
+${mailto:mailto.rejection2}
+
+ 
+Populate_Business_Application_name
+
+Business rule:
+
+(function executeRule(current, previous /*null when async*/) {
+
+	// Add your code here
+var app = new GlideRecord('cmdb_ci_business_app');
+	//app.addQuery('it_application_owner','Owen Sparacino');
+	//app.addQuery('it_application_owner.name','Owen Sparacino');
+    app.addQuery('it_application_owner',current.assigned_to);
+	app.query();
+	while(app.next()){
+		gs.print(app.name + 'exists');
+		//gs.info(app.getRowCount('name'));
+		//if (current.operation() == "insert")
+	//gs.eventQueue("cert_task.inserted", current, app.assigned_to, gs.getUserID());
+		gs.eventQueue("cert_task.inserted", app);
+	}
+})(current, previous);
+ AON APM - STRY0137328 : Notification to Business Application owner for validating data certification tasks
+
+(function runMailScript(/* GlideRecord */ current, /* TemplatePrinter */ template,
+          /* Optional EmailOutbound */ email, /* Optional GlideRecord */ email_action,
+          /* Optional GlideRecord */ event) {
+
+          // Add your code here AONDEV CODE
+var gr=new GlideRecord('cert_element');
+	gr.addEncodedQuery('cert_task='+current.sys_id+'^element=active');
+	//gr.addQuery('cert_task', current.sys_id);
+	gr.query();
+	while(gr.next()){
+		template.print( gr.id.getDisplayValue('name')+'<br><br>');
+		gs.info("Testing abc" + gr.id);
+		var gr1=new GlideRecord('cert_element');
+		gr1.addEncodedQuery('cert_task='+ current.sys_id + '^id=' + gr.id);
+		//gr.addQuery('cert_task', current.sys_id);
+		gr1.query();
+		template.print('<table border="1"><thead><tr><th>Certification Element</th><th>Value</th></tr></thead><tbody>');
+		while(gr1.next()){
+			//var watcherIds = current.watch_list.split(",");
+			var name =gr1.getDisplayValue('element');
+			var value = "id." + name;
+			template.print('<tr><td>'+gr1.getElement(value).getLabel()+'</td><td>'+gr1.getDisplayValue(value)+'</td></tr>');
+			//template.print(gr1.getElement(value).getLabel());
+			//template.print(gr1.getDisplayValue(value));
+			//	template.print("short_description", gr.getvalue('short_description'));
+		}
+
+		template.print('</tbody></table><br><br>');
+	}
+
+})(current, template, email, email_action, event);
+------------------------------------------------------------------------------------------------------------
+
+//PERSONAL DEV CODE
+
+
+(function runMailScript(/* GlideRecord */ current, /* TemplatePrinter */ template,
+										   /* Optional EmailOutbound */ email, /* Optional GlideRecord */ email_action,
+										   /* Optional GlideRecord */ event) {
+
+	// Add your code herevar gr=new GlideRecord('cert_element');
+	var gr=new GlideRecord('cert_element');
+	gr.addEncodedQuery('cert_task='+current.cert_task+'^element=active^original_value=true');
+	
+	//gr.addQuery('cert_task', current.sys_id);
+	gr.query();
+	
+	if(gr.next()){
+		template.print( gr.id.getDisplayValue('name')+'<br><br>');
+		gs.info("Testing abc" + gr.id);
+		var gr1=new GlideRecord('cert_element');
+		gr1.addEncodedQuery('cert_task='+ current.cert_task + '^id=' + gr.id);
+		//gr.addQuery('cert_task', current.sys_id);
+		gr1.query();
+		template.print('<table border="1"><thead><tr><th>Certification Element</th><th>Value</th></tr></thead><tbody>');
+		while(gr1.next()){
+			//var watcherIds = current.watch_list.split(",");
+			var name =gr1.getDisplayValue('element');
+			var value = "id." + name;
+			template.print('<tr><td>'+gr1.getElement(value).getLabel()+'</td><td>'+gr1.getDisplayValue(value)+'</td></tr>');
+			//template.print(gr1.getElement(value).getLabel());
+			//template.print(gr1.getDisplayValue(value));
+			//	template.print("short_description", gr.getvalue('short_description'));
+			if(gr1.getElement(value).getLabel() == 'Active')
+			gr1.setValue('original_value','false');
+			gr1.update();
+		}
+
+		template.print('</tbody></table><br><br>');
+	}
+})(current, template, email, email_action, event);
+

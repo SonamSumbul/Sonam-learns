@@ -1,0 +1,50 @@
+Sprint 2 - Questions for Data Certification Stories 
+
+1) STRY0137330 - On demand Application certification
+Certification Schedule - Run : On Demand
+
+       
+
+
+2) STRY0137326 - Configure data certification schedule for business applications 
+Filter - On Business Application Table 
+       - Filter Condition: 'Status(operational_status)' is Operational , (Active is True?)
+Display fields : Proposed - Name, Application type
+Certification fields : Proposed - Business criticality, Data classification, Contract end date, Active, Active user count,
+                                  Status, User base, Last change applied date, IT Application owner, Business owner
+Assignment type - User Field
+Assign to - IT Application owner (Ask: whether Business Application owner is the Business Owner or IT Application Owner)
+Days to complete - 10
+
+3) STRY0137327 - Define data certification jobs frequency
+Should trigger anually
+Certification Schedule - Run : Periodically
+Repeat Interval - ?(no. of days- anually so 365 days)
+Filter - On Business Application Table 
+       - Filter Condition: 'Status(operational_status)' is Operational , (Active is True?)
+Display fields : Proposed - Name, Application type
+Certification fields : Proposed - Business criticality, Data classification, Contract end date, Active, Active user count,
+                                  Status, User base, Last change applied date, IT Application owner, Business owner
+Assignment type - User Field
+Assign to - IT Application owner (Ask: whether Business Application owner is the Business Owner or IT Application Owner)
+Days to complete - 10
+
+4) STRY0137328 - Notification to Business Application owner for validating data certification tasks
+
+What should be the content of the notification
+
+Body:
+
+Sheryl Sisofo,
+ 
+A certification task (TASK00XXXXX) that has been assigned to you/your group for the 'Business Application' (Business Application Name') as part of the Data Certification and Management process requires attention.
+
+Please provide your response by choosing any one of the 4 options concerning you:
+-Yes, I am the owner and I certify that this data is accurate
+-Yes, I am the owner and I do not certify that this data is accurate (AON APM team to follow up) (Certification task to be reassigned, notify previous and new assigned to person about the certification task)
+-This application is no longer in use (AON APM team to follow up for retirement date) (who should be the concerned authority to receive this information)
+-No, I am no longer the owner of this application (AON APM team to follow up) (who should be the concerned authority to receive this information)
+
+${mail_script:Populate_Business_Application_name}
+
+Populate_Business_Application_name

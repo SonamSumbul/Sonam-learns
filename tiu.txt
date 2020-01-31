@@ -1,0 +1,30 @@
+
+168e6a224f6d88940e65c0f18110c71500282807dbf0af003eda125239961956
+168e6a224f6d88940e65c0f18110c71589a8ae994fcecc500e65c0f18110c79a
+run business rule on specific interval from scheduled job
+
+//code
+/*var sysListCtrl = new GlideSysListControl('time_card');
+var isOmitted = sysListCtrl.isOmitNewButton(); 
+gs.info('check omit new ' + isOmitted);
+
+var val1 = !RP.getListControl().isOmitNewButton();
+gs.info("Hello val1= " + val1);
+
+var val2 = RP.getListControl().isOmitNewButton();
+gs.info("Hello val2= " + val2);
+
+var val3 = current.canCreate() && !RP.getListControl().isOmitNewButton();
+gs.info("see val3=" + val3);*/
+
+&& !RP.getListControl().isOmitNewButton()
+On Preview HTML, the notification body should contain, the assigned to user of the IT Application owner of that business application, It should contain the name of the Business Application, the certification fields (9 in total along with their value) and 4 links namely:
+-Yes, I am the owner and I certify that this data is accurate
+-Yes, I am the owner and I do not certify that this data is accurate (AON APM team to follow up)
+-This application is no longer in use (AON APM team to follow up for retirement date)
+-No, I am no longer the owner of this application (AON APM team to follow up)
+
+how to relate business apps to softwares
+dashboards
+
+

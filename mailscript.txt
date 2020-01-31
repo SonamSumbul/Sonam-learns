@@ -1,0 +1,104 @@
+(function runMailScript( /* GlideRecord */ current, /* TemplatePrinter */ template,
+    /* Optional EmailOutbound */
+    email, /* Optional GlideRecord */ email_action,
+    /* Optional GlideRecord */
+    event) {
+
+    var tableString;
+    /*var grCi = new GlideRecord('cmdb_rel_ci');
+    grCi.addQuery('parent',current.id);
+    //grCi.addEncodedQuery('parent.nameSTARTSWITHMap software models^child.sys_class_name=cmdb_ci_service');
+    //grCi.addEncodedQuery('parent ='+ current.id + '^child.sys_class_name=cmdb_ci_service');
+    grCi.query();
+    gs.info('items cis found ' + grCi.getRowCount() + ' -- ' + current.id + '-- ' + current.getDisplayValue('id'));
+    var items = [];
+    if(grCi.next()){ 
+
+    	items.push( 
+    		grCi.getDisplayValue('child') 
+    	);
+    }*/
+
+    /* var bs = new GlideRecord('cmdb_ci_service');
+     bs.addQuery('u_application_name', current.sys_id);
+     bs.query();
+     gs.info('app name' + current.sys_id);
+     while (bs.next()) {
+         bs.getDisplayValue('u_application_name');
+     }*/
+
+    var appID = event.parm1;
+
+    var gr = new GlideRecord('cert_element');
+    //gr.addEncodedQuery('cert_task='+current.cert_task+'^element=active^original_value=true');
+    gr.addEncodedQuery('cert_task=' + current.sys_id + '^id=' + appID);
+    //gr.addQuery('cert_task', current.sys_id);
+    gr.query();
+
+    if (gr.next()) {
+        tableString = gr.id.getDisplayValue('name') + '<br><br><br>';
+        //gs.info("Testing abc" + gr.id);
+
+        var gr1 = new GlideRecord('cert_element');
+        gr1.addEncodedQuery('cert_task=' + current.sys_id + '^id=' + gr.id);
+        //gr.addQuery('cert_task', current.sys_id);
+        gr1.query();
+
+        tableString += '<table border="1"><thead><tr><th>Certification Element</th><th>Value</th></tr></thead><tbody>';
+        while (gr1.next()) {
+            var name = gr1.getDisplayValue('element');
+            var value = "id." + name;
+            var data = gr1.getDisplayValue(value);
+            gs.info('inbound = ' + data);
+            if (!data) {
+                data = '-';
+                //if(data == ''){
+                //}
+            }
+			var gd = new GlideDate(data); 
+			gd.getByFormat("dd-MMM-yyyy");
+			gd.setDisplayValue(data);
+            gs.info('check month' + gd.getByFormat("dd-MMM-yyyy"));
+			
+            tableString += '<tr><td>' + gr1.getElement(value).getLabel() + '</td><td>' + data + '</td></tr>';
+            gr1.update();
+
+        }
+    }
+    tableString += '</tbody></table>';
+    /*	tableString += '<p> Related configuration Items </p>';
+    		for(var t = 0 ; t < items.length ; t++ ){
+    			tableString += '<p> '+items[t]+' </p>' ;
+    template.print(tableString);
+    		}*/
+    //template.print(tableString);
+
+    template.print(tableString);
+
+        //software models
+        var grRel = new GlideRecord('cmdb_rel_ci');
+        grRel.addQuery('type', '41008aa6ef32010098d5925495c0fb94');
+        grRel.addQuery('parent.sys_class_name', 'cmdb_ci_business_app');
+        grRel.addQuery('child.sys_class_name', 'INSTANCEOF', 'cmdb_ci_service');
+        grRel.addQuery('parent', appID);
+        grRel.query();
+        while (grRel.next()) {
+
+
+
+            var grSWM = new GlideRecord('sn_apm_tpm_service_software_model');
+            grSWM.addQuery('business_service', grRel.child);
+            grSWM.query();
+            while (grSWM.next()) {
+                template.print('<p>'+'Service:' + grRel.child.name+'</p>');
+                template.print('<p>'+'Software models:' + grSWM.software_model.display_name+'</p>');
+            }
+
+
+        }
+
+    
+ 
+
+
+})(current, template, email, email_action, event);

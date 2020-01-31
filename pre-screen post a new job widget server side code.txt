@@ -1,0 +1,265 @@
+(function() {
+	data.isAdmin			=	gs.hasRole('x_figin_ats.ats_admin');
+	data.isHrManger 		=	gs.hasRole('x_figin_ats.hr_manager');
+	data.isHiringManger 	=	false;
+	if(gs.hasRole('x_figin_ats.hiring_manager') && !data.isAdmin && !data.isHrManger){
+		data.isHiringManger 	=	true;
+	}
+	
+	
+	/* Contract period flag required or not */
+	data.contract_period_requied_flag = false;
+	// data.requestedTypeIsJustification = false;
+	// data.requestedTypeIsReplacement = false;
+	
+	//template ID 
+	data.templateId=$sp.getParameter('template_id');
+	
+	/* Get the list of interview templates */
+	data.interviewTemplates = new x_figin_ats.ATSUtils().interviewTemplatesList();
+	
+	/* Get ats_admin_users */
+	data.ats_admin_users 	=  new x_figin_ats.ATSUtils().getAdmins('all');
+	
+	
+	/* Get hiring_manager_users */
+	data.hiring_manager_users = new x_figin_ats.ATSUtils().getHiringManagers('all');
+	
+	
+	/* Get hr_manager_users */
+	data.hr_manager_users 	= new x_figin_ats.ATSUtils().getHRmanagers('all');
+	
+	/* Get interviewer_users */
+	data.interviewer_users 	= new x_figin_ats.ATSUtils().getInterviewers('all');
+	
+	/* Get recruiter_users */
+	data.recruiter_users 	= new x_figin_ats.ATSUtils().getRecruiters('all');
+	
+	
+	/* Get department details */
+	data.departments 		=  new x_figin_ats.ATSUtils().getDepartments(); 
+	data.departments.unshift({name: 'Select department',id:''});
+	
+	/* Get Location details */
+	data.locations = new x_figin_ats.ATSUtils().getLocations(); 
+	
+	data.questions = new x_figin_ats.ATSUtils().getquestions(); 
+	
+	/* Get Skills */
+	data.skills =  new x_figin_ats.ATSUtils().getSkills();
+	
+	
+	/* Get Employment types */
+	data.empTypes =  new x_figin_ats.ATSUtils().getEmploymentTypes();
+	data.empTypes.unshift({name: 'Select employemnt type',id:''});
+	
+	/* Get Job Category details */
+	data.jobCategories =  new x_figin_ats.ATSUtils().getJobCategories();
+	data.jobCategories.unshift({name: 'Select job category',id:''});
+	
+	/* Get Interview Types details */
+	data.interviewTypes = new x_figin_ats.ATSUtils().getInterviewTypes();
+	
+	
+	/* Get Job grade details */
+	data.jobGrades = new x_figin_ats.ATSUtils().getJobGrades();
+	data.jobGrades.unshift({label: 'Select job grade',value:''});
+	
+	
+	/* Get Job Posting Type details */
+	data.postingTypes = new x_figin_ats.ATSUtils().getPostingTypes();
+	data.postingTypes.unshift({label: 'Select posting type',value:''});	
+	
+	/* Get Job Requested Types details */
+	data.requestedTypes = new x_figin_ats.ATSUtils().getRequestedTypes();
+	data.requestedTypes.unshift({label: 'Select requested type',value:''});
+	
+	/* Get Values */
+	/* data.values =  new x_figin_ats.ATSUtils().getValues(); */
+	
+	/* Get Experience details */
+	data.experienceList = new x_figin_ats.ATSUtils().getExperienceList();
+	data.experienceList.unshift({label: 'Select experience',value:''});
+	
+	// Education details
+	data.eduList = new x_figin_ats.ATSUtils().getEducationsList(); 
+	data.eduList.unshift({label: 'Select qualification',value:''});
+	
+	/* Get Job Templates list */
+	data.jobTempList =  new x_figin_ats.ATSUtils().getJobTempList(); 
+	data.jobTempList.unshift({name: 'Select template',id:''});
+	
+	
+	/* Get Job Template data */
+	if(input && input.funcName=='getJobTemplate'){
+		data.templateData  =  new x_figin_ats.ATSUtils().getJobTemplateData(input.tempId); 
+	}
+	
+	//insert Job Template
+	if(input && input.funcName=='addJob'){
+		var grJob=new GlideRecordSecure('x_figin_ats_job');
+		grJob.initialize();
+		
+		/* 
+		if(input.template == '' && input.templateAddCheck == 'addAsTemplate'){
+			//save job in templates as well--pending raju
+			
+			//tempalteName = input.job_title;
+			
+			var grAddJobTemp=new GlideRecordSecure('sys_template');
+			grAddJobTemp.initialize();
+			grAddJobTemp.name=input.job_title;
+			grAddJobTemp.table='x_figin_ats_job';
+			
+			var encodedQuery="";
+			//step--1
+			if(input.employmentType)
+			encodedQuery='job_type='+input.employmentType+'^';
+			if(input.contract_period)
+			encodedQuery=encodedQuery+'contract_period='+input.contract_period+'^';
+			if(input.jobGrade)
+			encodedQuery=encodedQuery+'seniority_level='+input.jobGrade+"^";
+			if(input.jobCategory)
+			encodedQuery=encodedQuery+'job_category='+input.jobCategory+"^";
+			if(input.jobDepartment)
+			encodedQuery=encodedQuery+'department='+input.jobDepartment+"^";
+			if(input.job_location)
+			encodedQuery=encodedQuery+'locations='+input.job_location+"^";
+			if(input.assigned_to)
+			encodedQuery=encodedQuery+'assigned_to='+input.assigned_to+"^";
+			if(input.hiringManager)
+			encodedQuery=encodedQuery+'hiring_manager='+input.hiringManager+"^";
+			// if(input.selectizeControlUserApprover)
+			// encodedQuery=encodedQuery+'approval_group='+input.selectizeControlUserApprover.getValue()+"^";
+			if(input.requestedType)
+			encodedQuery=encodedQuery+'request_type='+input.requestedType+"^";
+			if(input.justificationDetails)
+			encodedQuery=encodedQuery+'justification='+input.justificationDetails+"^";
+			if(input.replacementDetails)
+			encodedQuery=encodedQuery+'replacement_details='+input.replacementDetails+"^";
+			if(input.salary)
+			encodedQuery=encodedQuery+'pay_range='+input.salary+"^";
+			if(input.postingType)
+			encodedQuery=encodedQuery+'internal_external_posting='+input.postingType+"^";
+			//step--2
+			if(input.skills)
+			encodedQuery=encodedQuery+'skills='+input.skills+"^";
+			//values = input.selectizeControlValue.getValue();
+			if(input.experience)
+			encodedQuery=encodedQuery+'experience_level='+input.experience+"^";
+			if(input.education)
+			encodedQuery=encodedQuery+'qualification='+input.education+"^";
+			if(input.job_description)
+			encodedQuery=encodedQuery+'job_description='+input.job_description;
+			
+			grAddJobTemp.template=encodedQuery;
+			data.insert=grAddJobTemp.insert();
+		} 
+		*/
+		
+		
+		
+		//step--1
+		grJob.position=input.job_title;
+		grJob.job_type=input.employmentType;
+		grJob.contract_period=input.contract_period;
+		grJob.seniority_level=input.jobGrade;
+		grJob.job_category=input.jobCategory;
+		grJob.department=input.jobDepartment;
+		grJob.locations=input.job_location;
+		grJob.number_of_positions=input.no_of_positions;
+		
+		grJob.assigned_to=input.assigned_to;
+		grJob.hiring_manager=input.hiringManager;
+		// grJob.approval_group=input.jobRequestApprovers;
+		grJob.target_hiring_date=input.hiring_date;
+		grJob.expiry_date=input.expiry_date;
+		
+		grJob.request_type=input.requestedType;
+		grJob.justification=input.justificationDetails;
+		grJob.replacement_details=input.replacementDetails;
+		grJob.pay_range=input.salary;
+		grJob.internal_external_posting=input.postingType;
+		grJob.rewards=input.rewardPoints;
+	
+		//step--2
+		grJob.skills=input.skills;
+		/* grJob.values=input.values; */
+		grJob.experience_level=input.experience;
+		grJob.qualification=input.education;
+		grJob.job_description=input.job_description;
+		
+		
+		
+		//step--4
+		
+		if(data.isAdmin || data.isHrManger){
+			grJob.state= 6; //ready for Publish 
+			} else {
+			grJob.state= 2; //ready for Approval
+		}
+		grJob.expected_publish_date=input.postDate;
+		
+		//step--3 seup stages (pending needs to work on)
+		var res=grJob.insert();
+		if(res)
+		{
+			data.insert = true;
+			//console.log(data.interviewTypes)
+			if(data.interviewTypes.length){
+				if(data.interviewTypes[0].id){
+					new x_figin_ats.ATSUtils().setupInterviews(res, data.interviewTypes[0].id, input.init_scr_assigned, input.init_scr_template);
+				}
+				if(data.interviewTypes[1].id){
+					new x_figin_ats.ATSUtils().setupInterviews(res, data.interviewTypes[1].id, input.tech_int_assigned, input.tech_int_template);
+				}
+				if(data.interviewTypes[2].id){
+					new x_figin_ats.ATSUtils().setupInterviews(res, data.interviewTypes[2].id, input.hr_int_assigned, input.hr_int_template);
+				}
+				/* if(data.interviewTypes[3].id){
+					new x_figin_ats.ATSUtils().setupInterviews(res, data.interviewTypes[3].id, input.o_assigned, input.o_template);
+				} */
+			}
+		}
+	}
+	
+	
+	/* View Interview Questions based on selected Template */
+	data.interviewQuestionsTemp=[];
+	data.interviewQuestions=[];
+	if(input && input.funcName == 'viewIntQuestions'){
+		var qustionCount=0;
+		var grIntQuestions=new GlideRecordSecure('x_figin_ats_interview_question');
+		grIntQuestions.addActiveQuery();
+		grIntQuestions.addQuery('template', input.tempId);
+		grIntQuestions.query();
+		while(grIntQuestions.next()){
+			var question={};
+			qustionCount++;
+			question.number=qustionCount;
+			question.name=grIntQuestions.getValue('question');
+			//question.id=grIntQuestions.getUniqueValue();
+			data.interviewQuestions.push(question);
+		}
+		data.interviewQuestionsTemp.push({"templateName": grIntQuestions.getDisplayValue('template'), "templateId": grIntQuestions.getValue('template'), "templateQuestions": data.interviewQuestions})
+	}
+	
+	/*On Action Contract period flag required or not */
+	if(input && input.funcName == 'checkContractPeriodRequiredOrNot'){
+		data.contract_period_requied_flag = false;
+		data.contract_period_requied_flag  =  new x_figin_ats.ATSUtils().getEmploymentTypeContract(input.employmentTypeId); 
+	}
+	
+	/*On Action Contract period flag required or not */
+	/* 
+		if(input && input.funcName == 'checkRequestedTypeDescriptionRequiredOrNot'){
+		data.requestedTypeIsJustification = false;
+		data.requestedTypeIsReplacement = false;
+		var requestedTypeRequiredFeilds = new x_figin_ats.ATSUtils().getrequestedTypeRequiredFeilds(input.request_type_value); 
+		data.requestedTypeIsJustification = requestedTypeRequiredFeilds.justification;
+		data.requestedTypeIsReplacement   = requestedTypeRequiredFeilds.replacement;
+		}
+	*/
+	
+	
+})();

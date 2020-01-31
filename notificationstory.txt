@@ -1,0 +1,6 @@
+Please click ${mail_script:applicant_email_verification_link} to verify your email account.
+Verification code is: ${event.parm2}
+
+
+Are we referring to only the External Applicants here? If yes, the following notification 'ATS Applicant Email Verfication Code' is responsible for sending an email to the user with the following email body. Please refer the attached screenshot SS1. It asks the  user to verify his email by providing the verification code mentioned. 
+ 

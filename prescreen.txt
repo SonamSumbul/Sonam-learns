@@ -1,0 +1,230 @@
+<div class="breadCrumb clickable containerLeft">
+	<a href="?id=jobs">
+	<i class="glyphicon glyphicon-circle-arrow-left minBreadcrumbPadRight"></i> Back to All Jobs</a>
+</div>
+<div class="atsOuterBlock containerRight containerLeft clearfix" ng-if="data.isValidJob">
+	<div class="col-md-12 boxShade jobReqMinHeight marginMinBtmReq">
+		<div class="col-md-12 col-xs-12">
+			<div class="job_title col-xs-12 noPad">
+				<div class="col-sm-8 noPad">
+					<div class="title" style="margin:0 0 12px;">
+						<h3 class="jobRequestTitle"><!--<img class="title_img" src="job-title.png">--> {{data.job_title}}</h3>
+					</div>
+					<div class="experienceBlock noPad">
+						<div class="categoryLable jobRequestTitle" style="float:left; margin:0 10px 0 0; font-size:17px;"><!--<img class="title_img" src="working-experience-icon.png"> --> Experience Required:</div>
+						<div class="experienceContent" style="font-size:17px;">{{data.experience_level_name}}</div>
+					</div>
+				</div>
+				<div class="col-sm-4 panelMain clearfix">
+					<button type="button" class="borderRadius greenDarkButton btn  btn-sm minBtnWidth pull-right" style="padding:4px 0 7px; position:relative; right:0; top:12px;" ng-click='applyJob()'>Apply</button>
+				</div>
+			</div>			
+			<div class="jobDescriptionBlock marginMinBtmReq noPad col-sm-8 col-xs-12">
+				<div class="marginMinBtmReq">
+					<div class="categoryLable jobRequestTitle" style="font-size:17px;">Job Description:</div>
+					<div class="jobDescriptionContent" ng-bind-html="data.job_description"> </div>
+				</div>
+			</div>
+			<div class="jobDetails noPad col-sm-4 col-xs-12">
+				<table class="marginMinBtmReq table-striped jobRequestsTable tblBord">
+					<tbody>
+						<tr>
+							<td class="table_title">Number of positions:</td>
+							<td>{{data.no_of_positions}}</td>
+						</tr>
+						<tr>
+							<td class="table_title">Department:</td>
+							<td>{{data.department_name}}</td>
+						</tr>
+						<tr>
+							<td class="table_title">Job Type:</td>
+							<td>{{data.job_type_name}}</td>
+						</tr>
+						<tr  ng-if="data.contract_period" >
+							<td class="table_title">Contract Period:</td>
+							<td>{{data.contract_period }} months</td>
+						</tr>
+						<tr>
+							<td class="table_title">City:</td>
+							<td>	<ul style="padding: 0 0 0 15px;">
+								<li ng-repeat="location in data.location_name">{{location}}</li>
+							</ul></td>
+						</tr>
+						<tr>
+							<td class="table_title">Avg Salary (CTC):</td>
+							<td>{{data.salary}}</td>
+						</tr> 
+						<tr>
+							<td class="table_title">Skills:</td>
+							<td>{{data.skills_name}}</td>
+						</tr>  
+					</tbody>
+				</table>
+			</div>
+		</div>
+	</div>
+</div>
+<!--add form Modal start-->
+<div class="modal fade addTemplateModal" id="applyJobForm1" role="dialog">
+	<div class="modal-dialog modal-lg">
+		<form class="formStep1" name="formStep1">
+			<div class="modal-content">
+				<div class="modal-body  modalMargins" id="defineGoalDynamicData">
+					<div class="row">
+						<div class="col-md-12">
+							<p class='modalBadgeFont text-center' >{{data.job_title}}</p>
+							<p class="text-center noteRate" ng-if="c.data.alreadyApplied">You have already applied for this position. </p>
+							<p class="text-center noteRate" ng-if="c.data.applyFailed">Sorry your application has not submitted successfully. please try again</p>
+						</div>
+						<div class="col-xs-12" ng-if="c.data.showLoader" >
+							<div colspan="6" class="text-center">
+								<img src="loader_ats.gif" class="loadIconShort"/>
+								<p class="text-center">Please wait a moment while your request is being processed</p>
+							</div>
+						</div>
+						<div class="col-md-12" ng-show="!c.data.showLoader">
+							<div ng-show="c.data.detailsForm">
+								<div class="col-md-6">
+							<!--		<div class="form-group clearfix">
+										<label class="control-label">First Name <small class="requiredFeild">*</small></label>
+										<input class="form-control" placeholder="Please enter your first name" type="text" name="userFirstName"  ng-required="true"  ng-model="userFirstName"  ng-disabled="c.data.alreadyApplied" >
+										<small ng-show="formStep1.userFirstName.$error.required && formStep1.userFirstName.$touched" class="errorMsg ">Please complete this required field.</small>
+									</div> -->
+							<!--		<div class="form-group clearfix">
+										<label class="control-label">Last Name <small class="requiredFeild">*</small></label>
+										<input class="form-control" type="text"placeholder="Please enter your last name" name="userLastName"  ng-required="true"  ng-model="userLastName" ng-disabled="c.data.alreadyApplied">
+										<small ng-show="formStep1.userLastName.$error.required && formStep1.userLastName.$touched" class="errorMsg ">Please complete this required field.</small>
+									</div> -->
+							<!--		<div class="form-group clearfix">
+										<label class="control-label">Email <small class="requiredFeild">*</small></label>
+										<input class="form-control" placeholder="Please enter your email" ng-pattern = '/^(([^<>()\[\]\.,;:\s@\"]+(\.[^<>()\[\]\.,;:\s@\"]+)*)|(\".+\"))@(([^<>()[\]\.,;:\s@\"]+\.)+[^<>()[\]\.,;:\s@\"]{2,})$/i' type="email" name="userEmail"  ng-required="true"  ng-model="userEmail" ng-blur="checkApplication();">
+										<small ng-show="formStep1.userEmail.$error.required && formStep1.userEmail.$touched" class="errorMsg ">Please complete this required field.</small>
+										<small ng-show="!formStep1.userEmail.$error.required && formStep1.userEmail.$error.pattern" class="errorMsg ">Please enter valid email!</small>
+									</div> -->
+							<!--		<div class="form-group clearfix">
+										<label class="control-label">Country <!-- <small class="requiredFeild">*</small> </label>
+										<select class="form-control" name="country"  id="country" ng-model="country" ng-options="option.code as option.name for option in data.getPHTerritory | orderBy: 'name'" ng-init="country ? country : country = ''">
+										</select> 
+										 <small ng-show="formStep1.country.$error.required && formStep1.country.$touched" class="errorMsg ">Please complete this required field.</small> 
+								</div> -->
+								<!--	<div class="form-group clearfix">
+										<label class="control-label">Phone Number<!-- <small class="requiredFeild">*</small> </label>
+										<input class="form-control" placeholder="Please enter your phone number"  type="number" ng-pattern="/\d{10}/" name="userPhone" ng-model="userPhone" ng-disabled="c.data.alreadyApplied" ng-maxlength="10">
+										<small ng-show="formStep1.userPhone.$error.pattern || !formStep1.userPhone.$valid" class="errorMsg ">Please enter 10 digit valid phone number!</small>
+										 <small ng-show="formStep1.userPhone.$error.required && formStep1.userPhone.$touched" class="errorMsg ">Please complete this required field.</small> 
+										
+										 <input class="form-control" placeholder="Please enter your phone number"  type="number" ng-blur="checkPhoneNumberValidOrNot();" name="userPhone"  ng-required="true"  ng-model="userPhone" ng-disabled="c.data.alreadyApplied"> 
+										
+										 <small ng-show="!formStep1.userPhone.$error.required && !c.data.phoneNumberValid" class="errorMsg ">Please enter valid phone number!</small>
+									</div> 	-->
+           <!--       <div class="form-group clearfix">
+                    <input class="form-control" id="check_css" placeholder="Please click on the checkbox" type="checkbox" name="checkBOX"  ng-required="true"  ng-model="checkBOX"  ng-disabled="c.data.alreadyApplied" >
+										<label class="control-label" style="margin-left:2em!important;margin-top: -20em;">Here by, I consent that you can store my data in your database<small class="requiredFeild">*</small></label>
+										<small ng-show="formStep1.checkBox.$error.required && formStep1.checkBox.$touched" class="errorMsg ">Please complete this required field.</small>
+									</div> -->
+           <!--      	<div class="form-group clearfix">
+                    <input class="form-control" id="check_css" placeholder="Please accept the Terms & Conditions and Privacy Policy" type="checkbox" name="checkBox"  ng-required="true"  ng-model="checkBox"  ng-disabled="c.data.alreadyApplied" >
+										<label class="control-label" style="margin-left:2em!important;margin-top: -20em;">I accept to all the <a href="https://integrhythmincdemo1.service-now.com/ats_applicant/?id=terms_conditions" target="_blank">Terms & Conditions</a> and <a href="https://integrhythmincdemo1.service-now.com/ats_applicant/?id=privacy_policy" target="_blank">Privacy Policy</a> of the use and here by, I consent that you can store my data in your database<small class="requiredFeild">*</small></label>
+										<small ng-show="formStep1.checkBox.$error.required && formStep1.checkBox.$touched" class="errorMsg ">Please complete this required field.</small>
+									</div> -->
+								</div>
+								<div class="col-md-6 text-center">
+					<!--				<div class="add_resume common_styles">
+										<h2>Add Resume*</h2>
+										<div class="">
+											<label class="file-upload btn btn-primary">
+												Browse for file ... 
+												 <input type="file" name="file" onchange="angular.element(this).scope().setFiles(this.files)" /> 
+												<input type="file" id="fileToUpload" onchange="angular.element(this).scope().setFiles(this)" ng-disabled="c.data.alreadyApplied" />
+											</label>
+											<small ng-show="formStep1.userResume.$error.required && formStep1.userResume.$touched" class="errorMsg ">Please complete this required field.</small>
+										</div> -->
+										<span class="">
+											<br/>
+											<!--<div ng-show="files.length">
+												<div ng-repeat="file in files.slice(0)">
+													<span>{{file.webkitRelativePath || file.name}}</span>
+													(<span ng-switch="file.size > 1024*1024">
+														<span ng-switch-when="true">{{file.size / 1024 / 1024 | number:2}} MB</span>
+														<span ng-switch-default>{{file.size / 1024 | number:2}} kB</span>
+													</span>)<span class="glyphicon glyphicon-remove-circle" id="removeicon" ng-click="removeFiles(file)"></span>
+												</div>
+											</div>-->
+										</span>
+									</div>
+									<button ng-show="!showCoverInput" type="button" class="borderRadius cover_latter btn-cofig-blue btn" role="button" ng-click="coverLetterShow();"><i class="glyphicon glyphicon-plus iconBtnMinPad fontDyn"></i>Add cover letter</button>
+									<div class="form-group text-left" ng-show="showCoverInput">
+										<label class="feildfromLabel">Message: </label>
+										<div class="textArea">
+											<textarea placeholder="" class='form-control' maxlength="500" id="userCoverLetter" name="userCoverLetter" rows="5" ng-model='userCoverLetter' ng-disabled="c.data.alreadyApplied" style="resize: none;">
+											</textarea>
+										</div>
+									</div>
+								</div> 
+								
+							</div> 
+							<div class="col-md-12" ng-show="c.data.verificationForm">
+								<div class="form-group clearfix"  ng-show="data.verificationCodeSent">
+									<label class="control-label">Verification Code<small class="requiredFeild">*</small></label>
+									<input class="form-control" placeholder="Please check your email for verification code." type="text" name="verificationCode" ng-model="verificationCode" >
+									<!-- <small ng-show="formStep1.verificationCode.$error.required && formStep1.verificationCode.$touched" class="errorMsg ">Please complete this required field.</small> -->
+									<small ng-show="data.applicantVerfiedCheckedOnce && !c.data.verificationCodeMatched" class="errorMsg ">Please check your email for correct verification code.</small>
+								</div>
+								
+								<div class="verification_block_in col-sm-9 col-xs-12"><p class="color-green" ng-if="data.verificationCodeSent" style="font-weight: bold;">Please check your email for verification code to complete your job request.</p></div>
+								<div class="verification_block_in col-sm-3 col-xs-12"><p ng-disabled="!data.alreadyApplied" class="clickable color-blue text-right" ng-click="sendVerificationCode()"><span ng-if="data.verificationCodeSent">Re </span>Send verification code</p></div>
+								
+								
+								
+							</div>
+							
+							
+						</div> 
+						
+						<div class="closeModalTop">
+							<span class="modalfooterClose" data-dismiss="modal">
+								<span class="glyphicon glyphicon-remove modalCloseRightIcon" aria-hidden="true"></span>
+							</span>
+						</div>
+					</div>
+				</div>
+				<div class="modal-footer">
+					<button id="cancelApply" ng-if="c.data.detailsForm" type="button" class="borderRadius btn btn-sm btn-grey minBtnWidth fwb" role="button"  ng-click="clearApplyForm('email');" aria-hidden="false"  >Clear</button> 
+					
+					<button ng-if="c.data.verificationForm" id='submitButton' ng-click="applicantVerfied()" type="button" class="borderRadius btn  btn-sm  btn-green minBtnWidth fwb  marl15" role="button"  aria-hidden="false">Submit</button>
+					
+					<button ng-if="c.data.detailsForm"   ng-disabled="formStep1.$valid == false || c.data.alreadyApplied || !files.length  "  id='submitButton' ng-click="submitJob(files)" type="button" class="borderRadius btn  btn-sm  btn-green minBtnWidth fwb  marl15" role="button"  aria-hidden="false">Submit</button>
+				</div>
+			</div>
+		</form>
+	</div>
+</div>
+<!--add form Modal end-->
+
+<!-- Modal start-->
+<div class="modal fade" id="myModal" role="dialog">
+	<div class="modal-dialog modal-lg">
+		<div class="modal-content">
+			<div class="modal-body text-center modalMargins" id="moadlDynamicData">
+			</div>
+		</div>
+	</div>
+</div>
+
+
+<!-- Confirmation modal for discarding application -->
+<div id="confirm" class="modal fade" role="dialog">
+	<div class="modal-dialog ">
+		<div class="modal-content">
+			<div class="modal-body">
+				<div class="modalMargins">
+					<p class="confirm_popup">Application is not verified, Are you sure you want to discard the application ?</p> 
+				</div>
+				<div class="modal-footer">
+					<button type="button" data-dismiss="modal" class="btn btn-red btn-sm borderRadius fwb" id="confirmSubmit" >Confirm</button>
+					<button type="button" data-dismiss="modal" class="btn  btn-green  btn-sm borderRadius fwb"  id="cancelSubmit">Verify Now</button>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>

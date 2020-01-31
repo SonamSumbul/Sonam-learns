@@ -1,0 +1,94 @@
+$scope.$selectJobLocation = $('#job_location').selectize({
+			valueField: 'id',
+			labelField: 'name',
+			searchField: 'name',
+			placeholder: "Search by name...",
+			options: $scope.data.locations,
+			create: false,
+			// maxItems: 1,
+			sortField: {
+				field: 'name',
+				direction: 'asc'
+			},
+			onBlur: function() {
+				$scope.job_locationInvTouched = true;
+			},
+			onChange:function(value){
+				// var value = $("#job_location option:selected").text();
+				if(value) {
+					// $scope.job_location_preview = this.getItem(value)[0].innerHTML;
+					
+				}
+			},
+			onItemAdd:function(value, $item){
+				$scope.job_location_preview.push(this.getItem(value)[0].innerHTML);
+			}
+		});
+-------------------------------------
+	$scope.job_location_preview = [];
+		$scope.$selectJobLocation = $('#job_location').selectize({
+			valueField: 'id',
+			labelField: 'name',
+			searchField: 'name',
+			placeholder: "Search by name...",
+			options: $scope.data.locations,
+			create: false,
+			// maxItems: 1,
+			sortField: {
+				field: 'name',
+				direction: 'asc'
+			},
+			onBlur: function() {
+				$scope.job_locationInvTouched = true;
+			},
+			onChange:function(value){
+				// var value = $("#job_location option:selected").text();
+				if(value) {
+					// $scope.job_location_preview = this.getItem(value)[0].innerHTML;
+					
+				}
+			},
+			onItemAdd:function(value, $item){
+				$scope.job_location_preview.push(this.getItem(value)[0].innerHTML);
+			}
+		});
+		$scope.selectizeControlJobLocation = $scope.$selectJobLocation[0].selectize;
+		//assigned to -- recruiter role
+		$scope.$selectUser = $('#selectUser').selectize({
+			valueField: 'id',
+			labelField: 'name',
+			searchField: 'name',
+			placeholder: "Search by recruiter name...",
+			options: $scope.data.recruiter_users,
+			create: false,
+			maxItems: 1,
+			sortField: {
+				field: 'name',
+				direction: 'asc'
+			},
+			onBlur: function() {
+				$scope.selectedUserTouched = true;
+			}
+		});
+		$scope.selectizeControlUser = $scope.$selectUser[0].selectize;
+		//HiringManager -- hiring mangaer
+		$scope.$selectUserHiringManager = $('#hiringManager').selectize({
+			valueField: 'id',
+			labelField: 'name',
+			searchField: 'name',
+			placeholder: "Search by hiring manager name...",
+			options: $scope.data.hiring_manager_users,
+			create: false,
+			maxItems: 1,
+			sortField: {
+				field: 'name',
+				direction: 'asc'
+			},
+			onBlur: function() {
+				$scope.hiringManagerInvTouched = true;
+			}
+		});
+		$scope.selectizeControlUserHiringManager = $scope.$selectUserHiringManager[0].selectize;
+
+-----------------------------
+	$scope.selectizeControlJobLocation.clear();

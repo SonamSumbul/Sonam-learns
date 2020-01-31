@@ -1,0 +1,44 @@
+Action items identified from today's show me:
+1. Change the format of date fields shown in the email notification for certification tasks from 2020-01-03 to 2020-Jan-03
+2. Add hints to the certification fields in the email notification for certification tasks
+3. On Rejecting a business application through email, Show the Business Application name and ID,along with the rejection reason on the work notes of certification task
+
+
+var gd = new GlideDate(); 
+gs.info(gd.getByFormat("dd-MMM-yyyy"));
+
+below the links put instructions: from cert schedule
+write instructions: take from pass 
+
+better than when the project started-the path is right-understnads req, search for tech solutions,keep evolving-have 3-4 solutions in place
+to understnd which one is best-time is asaved-focus on this
+
+build more confidence-talk about your efforts-quantify your efforts
+updates on the work need to be proper - don't keep it negative 
+set your deadlines
+-Estimate the time for your work
+----improved technically
+-send clear status updates
+
+Work on providing updates to Kamesh
+
+
+Date when the last upgrade/fix/patch was applied
+​STRY0137423 - to add hints to all the OOTB fields on Business Application table
+
+
+
+
+/*	var glideElement = gr1.getElement("name");
+			var type = glideElement.getDisplayValue();
+			if(name== 'contract_end_date'){
+				var dateGlide = new GlideDate(data);
+				data = dateGlide.getByFormat("dd-MMM-yyyy");
+			}*/
+// 			var gd = new GlideDate(); 
+// 			var date = gd.getByFormat("dd-MMM-yyyy");
+// 						if(date==today){
+// 				data = gd.setDisplayValue(date);
+// 			}
+//             gs.info(gd.getByFormat("dd-MMM-yyyy"));
+			

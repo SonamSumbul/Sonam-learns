@@ -1,0 +1,865 @@
+function($scope) {
+	/* widget controller */
+	var c = this;
+	//touched flag for selectize  fields start
+	$scope.selectedUserTouched = false;
+	$scope.hiringManagerInvTouched = false;
+	$scope.job_locationInvTouched = false;
+	$scope.selectSkillInvTouched = false;
+	$scope.job_descriptionInvTouched = false;
+	// testing
+	$scope.$selectJobLocation = $('#pre-screen').selectize({
+			valueField: 'id',
+			labelField: 'name',
+			searchField: 'name',
+			placeholder: "Search by name...",
+			options: $scope.data.questions,
+			create: false,
+			// maxItems: 1,
+			sortField: {
+				field: 'name',
+				direction: 'asc'
+			},
+			onBlur: function() {
+				$scope.job_locationInvTouched = true;
+			},
+			onChange:function(value){
+				// var value = $("#job_location option:selected").text();
+				if(value) {
+					// $scope.job_location_preview = this.getItem(value)[0].innerHTML;
+					
+				}
+			},
+			onItemAdd:function(value, $item){
+				$scope.job_location_preview.push(this.getItem(value)[0].innerHTML);
+			}
+		});
+	$scope.job_location_preview = [];
+		$scope.$selectJobLocation = $('#pre-screen').selectize({
+			valueField: 'id',
+			labelField: 'name',
+			searchField: 'name',
+			placeholder: "Search by name...",
+			options: $scope.data.questions,
+			create: false,
+			// maxItems: 1,
+			sortField: {
+				field: 'name',
+				direction: 'asc'
+			},
+			onBlur: function() {
+				$scope.job_locationInvTouched = true;
+			},
+			onChange:function(value){
+				// var value = $("#job_location option:selected").text();
+				if(value) {
+					// $scope.job_location_preview = this.getItem(value)[0].innerHTML;
+					
+				}
+			},
+			onItemAdd:function(value, $item){
+				$scope.job_location_preview.push(this.getItem(value)[0].innerHTML);
+			}
+		});
+		$scope.selectizeControlJobLocation = $scope.$selectJobLocation[0].selectize;
+		//assigned to -- recruiter role
+	
+	//trying job location code
+	
+	$scope.$selectJobLocation = $('#job_location').selectize({
+			valueField: 'id',
+			labelField: 'name',
+			searchField: 'name',
+			placeholder: "Search by name...",
+			options: $scope.data.locations,
+			create: false,
+			// maxItems: 1,
+			sortField: {
+				field: 'name',
+				direction: 'asc'
+			},
+			onBlur: function() {
+				$scope.job_locationInvTouched = true;
+			},
+			onChange:function(value){
+				// var value = $("#job_location option:selected").text();
+				if(value) {
+					// $scope.job_location_preview = this.getItem(value)[0].innerHTML;
+					
+				}
+			},
+			onItemAdd:function(value, $item){
+				$scope.job_location_preview.push(this.getItem(value)[0].innerHTML);
+			}
+		});
+	//touched flag for selectize  fields end
+	//date comparisons
+	$scope.invalidExp = function () {
+		$scope.formStep1.expiry_date.$valid = false; 
+		$scope.expiryDateValidCheck = true; 
+	}
+	$scope.validExp = function () {
+		$scope.formStep1.expiry_date.$valid = true; 
+		$scope.expiryDateValidCheck = false; 
+	}
+	$scope.invalidPublishDate = function () {
+		$scope.formStep4.sheduleDateInput1.$valid = false; 
+		$scope.publishDateValidCheck = true; 
+	}
+	$scope.validPublishDate = function () {
+		$scope.formStep4.sheduleDateInput1.$valid = true; 
+		$scope.publishDateValidCheck = false; 
+	}
+	//date comparisons
+	
+	//splits templates for interview stages starts here
+	var interviewTemplatesList = c.data.interviewTemplates;
+	c.data.initialScreeningTemplatesList = interviewTemplatesList.filter(function( interviewTemplatesList ) {
+		return interviewTemplatesList.type_of_interview === "Initial Screening";
+	});
+	c.data.technicalTemplatesList= interviewTemplatesList.filter(function( interviewTemplatesList ) {
+		return interviewTemplatesList.type_of_interview === "Technical / Functional Interview";
+	});
+	c.data.hrInterviewTemplatesList = interviewTemplatesList.filter(function( interviewTemplatesList ) {
+		return interviewTemplatesList.type_of_interview === "HR Interview";
+	});
+	c.data.offerTemplatesList = interviewTemplatesList.filter(function( interviewTemplatesList ) {
+		return interviewTemplatesList.type_of_interview === "Offer";
+	});
+	//split templates for interview stages ends here
+	
+	//summer note for job description start
+	$('#job_description').summernote({
+		callbacks: {
+			onInit: function() {
+				var markupStr = $('#job_description').summernote('code');
+				$scope.job_description = markupStr;
+				$('#job_description_preview').empty();
+				angular.element('#job_description_preview').append($scope.job_description);
+			},
+			onBlur: function() {
+				$scope.job_descriptionInvTouched =true;
+				var markupStr = $('#job_description').summernote('code');
+				$scope.job_description = markupStr;
+				$('#job_description_preview').empty();
+				angular.element('#job_description_preview').append($scope.job_description);
+			}
+		},
+		height: 390,  //set editable area's height
+		toolbar: [
+			['style', ['bold', 'italic', 'underline', 'clear']],
+			['color', ['color']],
+			['fontsize', ['fontsize']],
+			['font', ['strikethrough', 'superscript', 'subscript']],
+			['para', ['ul', 'ol', 'paragraph']],
+			['height', ['height']]
+		]
+	});
+	//summer-note for job description end
+	// angular UI date picker start
+    $scope.hiring_date = new Date ();
+    $scope.expiry_date = new Date ();
+    $scope.sheduleDateInput = new Date ();
+    $scope.sheduleDateInput1 = new Date ();
+	$scope.currentDate = function () {
+		$scope.postDate =  $scope.sheduleDateInput;
+	}
+	$scope.currentDate();
+	// currentDate
+	$scope.sheduleDate = function(date) {
+		$scope.sheduleDateInput1 = date;
+		$scope.postDate = $scope.sheduleDateInput1;
+	};
+	if($scope.sheduleDateInput1){
+		$scope.postDate = $scope.sheduleDateInput1;
+		}else{
+		$scope.postDate = $scope.sheduleDateInput; 
+	}
+	$scope.dateOptions = {
+		minDate: new Date() 
+	};
+    $scope.config1 = {};
+    $scope.config1.opened = false;
+    $scope.open1 = function(event){
+		event.preventDefault();
+		event.stopPropagation();
+		$scope.config1.opened = true;
+	};
+    $scope.config2 = {};
+    $scope.config2.opened = false;
+    $scope.open2 = function(event){
+		event.preventDefault();
+		event.stopPropagation();
+		$scope.config2.opened = true;
+	};
+	$scope.config3 = {};
+    $scope.config3.opened = false;
+    $scope.open3 = function(event){
+		event.preventDefault();
+		event.stopPropagation();
+		$scope.config3.opened = true;
+	};
+	$scope.config4 = {};
+    $scope.config4.opened = false;
+    $scope.open4 = function(event){
+		event.preventDefault();
+		event.stopPropagation();
+		$scope.config4.opened = true;
+	};
+	// angular UI date picker end
+	//tabs start
+	$scope.active = 1;
+	$scope.selectTab = function (value) {
+		$scope.active = value;
+	}
+	$scope.isActive = function (value) {
+		if ($scope.active == value) {
+			return true;
+		}
+		else {
+			return false;
+		}
+	}
+	//tabs end
+	//preview
+	$scope.changeDepartment = function () {
+		var dp = $('#jobDepartment option:selected').text();
+		$scope.jobDepartment_preview = dp;
+	}
+	$scope.changeExperience = function () {
+		var ex = $('#experience option:selected').text();
+		$scope.experience_preview = ex;		
+	}
+	//preview
+	//fields data starts
+	setTimeout(function () {
+		$scope.initialSelectedValue = '';
+		$scope.technicalSelectedValue = '';
+		$scope.hrSelectedValue = '';
+		$scope.offerSelectedValue = '';
+		// modal dyanmic show starts here
+		$scope.showtemplateQuestionsModal = function (data,type) {
+			var name = '';
+			var id = '';
+			var que = '';
+			var qD = '';
+			if(type == 'templatePreview'){
+				if(data.templateName == '' ){
+					qD+="No questions available for this template";
+					}else{
+					name = data.templateName + ' Questions';       //templateName
+					id   = data.templateId;         //templateId
+					que  = data.templateQuestions;  //templateQuestions
+					qD+="<ul>";
+					que.forEach(function (o) {
+						qD+="<li class="+o.number+">"+o.number+" "+o.name+"</li>"; 
+					});
+					qD+="</ul>";
+				}
+				}else if(type == 'jobPosted'){
+				name = data.templateName;       //templateName
+			}
+			$("#moadlDynamicData").html('<div class="row"><div class="col-md-12"><p class="modalBadgeFont" id='+id+'>' +name + ' </p></div><div class="col-md-12" >'+qD+'</div><div class="closeModalTop"><span class="modalfooterClose" data-dismiss="modal"><span class="glyphicon glyphicon-remove modalCloseRightIcon" aria-hidden="true"></span></span></div></div>');
+			$("#myModal").modal();
+		}
+		// modal dynamic show ends here
+		$scope.initScrTemp = function (value) {
+			$scope.data.funcName = 'viewIntQuestions';
+			$scope.data.tempId=value;
+			//get template questions from server			
+			c.server.update().then(function () {
+				var data = c.data.interviewQuestionsTemp[0];
+				$scope.showtemplateQuestionsModal(data,'templatePreview');
+			}) 
+		}
+		$scope.techScrTemp = function (value) {
+			$scope.data.funcName = 'viewIntQuestions';
+			$scope.data.tempId=value;
+			c.server.update().then(function () {
+				var data = c.data.interviewQuestionsTemp[0];
+				$scope.showtemplateQuestionsModal(data,'templatePreview');
+			}) 
+		} 
+		$scope.hrScrTemp = function (value) {
+			$scope.data.funcName = 'viewIntQuestions';
+			$scope.data.tempId=value;
+			c.server.update().then(function () {
+				var data = c.data.interviewQuestionsTemp[0];
+				$scope.showtemplateQuestionsModal(data,'templatePreview');
+			}) 
+		} 
+		/* 	
+			$scope.offerScrTemp = function (value) {
+			$scope.data.funcName = 'viewIntQuestions';
+			$scope.data.tempId=value;
+			c.server.update().then(function () {
+			var data = c.data.interviewQuestionsTemp[0];
+			$scope.showtemplateQuestionsModal(data,'templatePreview');
+			}) 
+			}
+		*/
+		//templates For Initial Screening
+		$scope.$selectInitialSceeringTemplate = $('#templatesForInitialScreening').selectize({
+			valueField: 'tempId',
+			labelField: 'name',
+			searchField: 'name',
+			placeholder: "Search by interview template name...",
+			options: c.data.initialScreeningTemplatesList,
+			create: false,
+			sortField: {
+				field: 'name',
+				direction: 'asc'
+			},
+			onChange: function(value) {
+				$scope.initialSelectedValue = value;
+			} 
+		});
+		$scope.selectizeInitSceeringTemplate = $scope.$selectInitialSceeringTemplate[0].selectize;
+		//templates For technical Screening
+		$scope.$selectTechincalSceeringTemplate = $('#templatesForTechincal').selectize({
+			valueField: 'tempId',
+			labelField: 'name',
+			searchField: 'name',
+			placeholder: "Search by interview template name...",
+			options: c.data.technicalTemplatesList,
+			create: false,
+			sortField: {
+				field: 'name',
+				direction: 'asc'
+			},
+			onChange: function(value) {
+				$scope.technicalSelectedValue = value;
+			} 
+		});
+		$scope.selectizeTechSceeringTemplate = $scope.$selectTechincalSceeringTemplate[0].selectize;
+		//templates For hr Screening
+		$scope.$selectHrSceeringTemplate = $('#templatesForHr').selectize({
+			valueField: 'tempId',
+			labelField: 'name',
+			searchField: 'name',
+			placeholder: "Search by interview template name...",
+			options: c.data.hrInterviewTemplatesList,
+			create: false,
+			sortField: {
+				field: 'name',
+				direction: 'asc'
+			},
+			onChange: function(value) {
+				$scope.hrSelectedValue = value;
+			} 
+		});
+		$scope.selectizeHrSceeringTemplate = $scope.$selectHrSceeringTemplate[0].selectize;
+		/* //templates For offer Screening
+			$scope.$selectOfferSceeringTemplate = $('#templatesForOffer').selectize({
+			valueField: 'tempId',
+			labelField: 'name',
+			searchField: 'name',
+			placeholder: "Search by name...",
+			options: c.data.offerTemplatesList,
+			create: false,
+			sortField: {
+			field: 'name',
+			direction: 'asc'
+			},
+			onChange: function(value) {
+			$scope.offerSelectedValue = value;
+			} 
+			});
+		$scope.selectizeOfferSceeringTemplate = $scope.$selectOfferSceeringTemplate[0].selectize; */
+		//location
+		$scope.job_location_preview = [];
+		$scope.$selectJobLocation = $('#job_location').selectize({
+			valueField: 'id',
+			labelField: 'name',
+			searchField: 'name',
+			placeholder: "Search by name...",
+			options: $scope.data.locations,
+			create: false,
+			// maxItems: 1,
+			sortField: {
+				field: 'name',
+				direction: 'asc'
+			},
+			onBlur: function() {
+				$scope.job_locationInvTouched = true;
+			},
+			onChange:function(value){
+				// var value = $("#job_location option:selected").text();
+				if(value) {
+					// $scope.job_location_preview = this.getItem(value)[0].innerHTML;
+					
+				}
+			},
+			onItemAdd:function(value, $item){
+				$scope.job_location_preview.push(this.getItem(value)[0].innerHTML);
+			}
+		});
+		$scope.selectizeControlJobLocation = $scope.$selectJobLocation[0].selectize;
+		//assigned to -- recruiter role
+		$scope.$selectUser = $('#selectUser').selectize({
+			valueField: 'id',
+			labelField: 'name',
+			searchField: 'name',
+			placeholder: "Search by recruiter name...",
+			options: $scope.data.recruiter_users,
+			create: false,
+			maxItems: 1,
+			sortField: {
+				field: 'name',
+				direction: 'asc'
+			},
+			onBlur: function() {
+				$scope.selectedUserTouched = true;
+			}
+		});
+		$scope.selectizeControlUser = $scope.$selectUser[0].selectize;
+		//HiringManager -- hiring mangaer
+		$scope.$selectUserHiringManager = $('#hiringManager').selectize({
+			valueField: 'id',
+			labelField: 'name',
+			searchField: 'name',
+			placeholder: "Search by hiring manager name...",
+			options: $scope.data.hiring_manager_users,
+			create: false,
+			maxItems: 1,
+			sortField: {
+				field: 'name',
+				direction: 'asc'
+			},
+			onBlur: function() {
+				$scope.hiringManagerInvTouched = true;
+			}
+		});
+		$scope.selectizeControlUserHiringManager = $scope.$selectUserHiringManager[0].selectize;
+		/* 	//Approver -- approver_user
+			$scope.$selectUserApprover = $('#jobRequestApprovers').selectize({
+			valueField: 'id',
+			labelField: 'name',
+			searchField: 'name',
+			placeholder: "Search by name...",
+			options: $scope.data.approver_users,
+			create: false,
+			maxItems: 1,
+			sortField: {
+			field: 'name',
+			direction: 'asc'
+			}
+			});
+		$scope.selectizeControlUserApprover = $scope.$selectUserApprover[0].selectize; */
+		//skills
+		$scope.$selectSkill = $('#selectSkill').selectize({
+			valueField: 'id',
+			labelField: 'name',
+			searchField: 'name',
+			maxItems:5,
+			placeholder: "Select Skills",
+			options: $scope.data.skills,
+			create: false,
+			sortField: {
+				field: 'name',
+				direction: 'asc'
+			},
+			onBlur: function() {
+				$scope.selectSkillInvTouched = true;
+			}
+		});
+		$scope.selectizeControlSkills = $scope.$selectSkill[0].selectize;
+		/* competencies */
+		/* $scope.$selectValue = $('#selectValue').selectize({
+			valueField: 'id',
+			labelField: 'name',
+			searchField: 'name',
+			placeholder: "Select Competencies",
+			options: $scope.data.values,
+			create: false,
+			sortField: {
+			field: 'name',
+			direction: 'asc'
+			}
+			});
+		$scope.selectizeControlValue = $scope.$selectValue[0].selectize; */
+		//users for stages starts here
+		//initialScreeningUser
+		$scope.$selectUserinitialScreening = $('#initialScreeningUser').selectize({
+			valueField: 'id',
+			labelField: 'name',
+			searchField: 'name',
+			placeholder: "Search by interviewer name...",
+			options: $scope.data.interviewer_users,
+			create: false,
+			sortField: {
+				field: 'name',
+				direction: 'asc'
+			}
+		});
+		$scope.selectizeControlUserinitialScreening = $scope.$selectUserinitialScreening[0].selectize;
+		//technicalFunctionalInterviewUser
+		$scope.$selectUsertechnicalInterview = $('#technicalFunctionalInterviewUser').selectize({
+			valueField: 'id',
+			labelField: 'name',
+			searchField: 'name',
+			placeholder: "Search by interviewer name...",
+			options: $scope.data.interviewer_users,
+			create: false,
+			sortField: {
+				field: 'name',
+				direction: 'asc'
+			}
+		});
+		$scope.selectizeControlUsertechnicalInterview = $scope.$selectUsertechnicalInterview[0].selectize;
+		//hrInterviewUser
+		$scope.$selectUserhrInterview = $('#hrInterviewUser').selectize({
+			valueField: 'id',
+			labelField: 'name',
+			searchField: 'name',
+			placeholder: "Search by interviewer name...",
+			options: $scope.data.hr_manager_users,
+			create: false,
+			sortField: {
+				field: 'name',
+				direction: 'asc'
+			}
+		});
+		$scope.selectizeControlUserhrInterview = $scope.$selectUserhrInterview[0].selectize;
+		/* 
+			//offer 
+			$scope.$selectUserOffer = $('#offerUser').selectize({
+			valueField: 'id',
+			labelField: 'name',
+			searchField: 'name',
+			placeholder: "Search by name...",
+			options: $scope.data.hr_manager_users,
+			create: false,
+			sortField: {
+			field: 'name',
+			direction: 'asc'
+			}
+			});
+			$scope.selectizeControlUserOffer = $scope.$selectUserOffer[0].selectize;
+		*/
+		//one-line string to object starts here
+		function get_json_from_string(x) {
+			if(x){
+				return x.split('^').reduce(function(result, token){
+					var subtokens = token.split('=');
+					result[subtokens[0]] = subtokens.slice(1).join('=');
+					return result;
+				}, {});
+				}else{
+				return;
+			}
+		}
+		
+		/* 	//submit and save as template
+			$scope.submitJobWithTemplate = function () {
+			$scope.data.templateAddCheck = 'addAsTemplate';
+			$scope.submitJob();
+			}  
+		*/
+		//one-line string to object ends here
+		$scope.submitJob = function (){
+			//submit form starts here
+			/*ref for save as template start*/
+			// if($scope.template != ''){
+			$scope.data.template = $scope.template;
+			// }
+			/*ref for save as template end*/
+			
+			$scope.data.funcName = 'addJob';
+			
+			//step--1
+			$scope.data.job_title = $scope.job_title;
+			$scope.data.employmentType = $scope.employmentType;
+			$scope.data.contract_period = $scope.contract_period;
+			$scope.data.jobGrade = $scope.jobGrade;
+			$scope.data.jobCategory = $scope.jobCategory;
+			$scope.data.jobDepartment = $scope.jobDepartment;
+			$scope.data.job_location = $scope.job_location;
+			$scope.data.no_of_positions = $scope.no_of_positions;
+			if(c.data.isHiringManger){
+				$scope.data.assigned_to = '';
+				$scope.data.hiringManager = '';
+				}else{
+				$scope.data.assigned_to = $scope.selectizeControlUser.getValue();
+				$scope.data.hiringManager = $scope.selectizeControlUserHiringManager.getValue();
+			}
+			
+			// $scope.data.jobRequestApprovers = $scope.selectizeControlUserApprover.getValue();
+			$scope.data.hiring_date = $("#hiring_date").find("input").val();
+			$scope.data.expiry_date = $("#expiry_date").find("input").val();
+			$scope.data.requestedType = $scope.requestedType;
+			$scope.data.justificationDetails = $scope.justificationDetails;
+			$scope.data.replacementDetails = $scope.replacementDetails;
+			$scope.data.salary = $scope.salary;
+			$scope.data.postingType = $scope.postingType;
+			$scope.data.rewardPoints = $scope.rewardPoints;
+			//step--2
+			$scope.data.skills = $scope.selectizeControlSkills.getValue();
+			/* $scope.data.values = $scope.selectizeControlValue.getValue(); */
+			$scope.data.experience = $scope.experience;
+			$scope.data.education = $scope.education;
+			$scope.data.job_description = $scope.job_description;
+			//step--3
+			/* if(!c.data.isHiringManger){ */
+				$scope.data.init_scr_assigned 	= $scope.selectizeControlUserinitialScreening.getValue();
+				$scope.data.init_scr_template 	= $scope.selectizeInitSceeringTemplate.getValue();
+				$scope.data.tech_int_assigned 	= $scope.selectizeControlUsertechnicalInterview.getValue();
+				$scope.data.tech_int_template 	= $scope.selectizeTechSceeringTemplate.getValue();
+				$scope.data.hr_int_assigned 	= $scope.selectizeControlUserhrInterview.getValue();
+				$scope.data.hr_int_template 	= $scope.selectizeHrSceeringTemplate.getValue();	
+				/* }else{
+				$scope.data.init_scr_assigned 	= '';
+				$scope.data.init_scr_template 	= '';
+				$scope.data.tech_int_assigned 	= '';
+				$scope.data.tech_int_template 	= '';
+				$scope.data.hr_int_assigned 	= '';
+				$scope.data.hr_int_template 	= '';
+			}
+			 */
+			
+			/* 	
+				$scope.data.o_assigned 			= $scope.selectizeControlUserOffer.getValue();
+				$scope.data.o_template 			= $scope.selectizeOfferSceeringTemplate.getValue(); 
+			*/
+			//step--4
+			$scope.data.postDate = $scope.postDate;
+			$('#submitButton').prop('disabled', true);
+			$('#submitButtonTem').prop('disabled', true);
+			c.server.update().then(function () {
+				if (c.data.insert) {
+					var dataa = {templateName:'Success your job has been submitted successfully.'};
+					$scope.showtemplateQuestionsModal(dataa,'jobPosted');
+					$scope.resetAddForm();
+					$scope.selectTab(1);
+					$('#submitButton').prop('disabled', false);
+					$('#submitButtonTem').prop('disabled', false);
+				}
+			})
+		}
+		//submit  form ends here
+		//reset form starts here
+		$scope.resetAddForm = function () {
+			//reset preview
+			angular.element('#job_description_preview').empty();
+			$scope.job_location_preview = '';
+			$scope.experience_preview= '';
+			$scope.jobDepartment_preview= '';
+			//step--1
+			$scope.job_title = '';
+			$scope.employmentType = '';
+			$scope.contract_period = '';
+			$scope.jobGrade = '';
+			$scope.jobCategory = '';
+			$scope.jobDepartment = '';
+			$scope.selectizeControlJobLocation.clear();
+			$scope.no_of_positions = '';
+			$scope.selectizeControlUser.clear();
+			$scope.selectizeControlUserHiringManager.clear();  
+			// $scope.selectizeControlUserApprover.clear(); 
+			$scope.hiring_date = new Date ();
+			$scope.expiry_date = new Date ();
+			$scope.requestedType = '';
+			$scope.justificationDetails = '';
+			$scope.replacementDetails = '';
+			$scope.salary = '';
+			$scope.postingType = '';
+			$scope.rewardPoints= '';
+			//step--2
+			$scope.selectizeControlSkills.clear();
+			/* $scope.selectizeControlValue.clear();  */
+			$scope.experience = '';
+			$scope.education = '';
+			$scope.job_description = '';
+			$("#job_description").summernote("reset");
+			//step--3
+			$scope.selectizeControlUserinitialScreening.clear();
+			$scope.selectizeInitSceeringTemplate.clear();
+			$scope.selectizeControlUsertechnicalInterview.clear();
+			$scope.selectizeTechSceeringTemplate.clear();
+			$scope.selectizeControlUserhrInterview.clear();
+			$scope.selectizeHrSceeringTemplate.clear();
+			/* $scope.selectizeControlUserOffer.clear();
+			$scope.selectizeOfferSceeringTemplate.clear();  */
+			//step--4
+			$scope.postDate = new Date ();
+			$scope.sheduleDateInput = new Date ();
+			$scope.sheduleDateInput1 = new Date ();
+			$scope.selectedUserTouched = false;
+			$scope.hiringManagerInvTouched = false;
+			$scope.job_locationInvTouched = false;
+			$scope.selectSkillInvTouched = false;
+			$scope.job_descriptionInvTouched = false;
+			$scope.formStep1.$setUntouched();
+			$scope.template='';
+			
+			$scope.data.templateStore = '';
+			
+		}
+		//reset form ends here
+		//Load data from existing template starts here
+		$scope.getTemplateDetails = function () {
+			c.data.funcName = 'getJobTemplate';
+			if($scope.template != ''){
+				
+				c.data.tempId = $scope.template;
+				c.server.update().then(function(){
+					var finTempObj = get_json_from_string(c.data.templateData[0]['name']); //object
+					//step--1
+					//optional feilds
+					$scope.employmentType	= finTempObj.job_type != undefined ? finTempObj.job_type : '';
+					$scope.jobCategory		= finTempObj.job_category != undefined ? finTempObj.job_category : '';
+					$scope.jobGrade			= finTempObj.seniority_level != undefined ? finTempObj.seniority_level : '';
+					$scope.experience		= finTempObj.experience_level != undefined ? finTempObj.experience_level : '';
+					$scope.education		= finTempObj.qualification != undefined ? finTempObj.qualification : '';
+					$scope.contract_period		=  parseInt(finTempObj.contract_period);
+					$scope.salary 				=  parseInt(finTempObj.pay_range.replace(/,/g,''));
+					$scope.jobDepartment	= finTempObj.department;
+					//location start
+					var job_location 	= finTempObj.location;
+					var $selectjob_location 			= 	$("#job_location").selectize();
+					var selectizejob_location 			= $selectjob_location[0].selectize;
+					selectizejob_location.setValue(job_location);
+					/* 
+						
+						var assigned_toUser 	= finTempObj.assigned_to;
+						var $selectassigned_toUser 			= 	$("#selectUser").selectize();
+						var selectizeassigned_toUser 			= $selectassigned_toUser[0].selectize;
+						selectizeassigned_toUser.setValue(assigned_toUser);
+						
+						var opened_byUser 		= finTempObj.opened_by;
+						var $selectopened_byUser 			= $("#hiringManager").selectize();
+						var selectizeopened_byUser 			= $selectopened_byUser[0].selectize;
+						selectizeopened_byUser.setValue(opened_byUser);
+						
+					*/
+					$scope.requestedType		=  finTempObj.request_type; 
+					$scope.justificationDetails =  finTempObj.justification;
+					$scope.replacementDetails 	=  finTempObj.replacement_details;
+					$scope.postingType	 		=  finTempObj.internal_external_posting;
+					//step--2
+					//populate skills starts here
+					var templateSkills = finTempObj.skills;
+					if (templateSkills.indexOf(',') == -1) { 
+						var str_array_skills = templateSkills;
+						}else{
+						var str_array_skills = templateSkills.split(','); 
+					}
+					var $select = 	$("#selectSkill").selectize();
+					var selectize = $select[0].selectize;
+					selectize.setValue(str_array_skills);
+					selectize.refreshOptions();
+					//populate skills ends here
+					/* IMP DONT REMOVE */
+					//populate competencies starts here //
+					/* var templateValues = finTempObj.values;
+						if (templateValues.indexOf(',') == -1) {
+						var str_array_values = templateValues;
+						}else{
+						var str_array_values = templateValues.split(','); 
+						}
+						var $select = 	$("#selectValue").selectize();
+						var selectize = $select[0].selectize;
+						selectize.setValue(str_array_values);
+					selectize.refreshOptions(); */
+					//populate competencies starts here
+					/* IMP DONT REMOVE */
+					var jobDescription = finTempObj.job_description;
+					$('#job_description').summernote('reset');
+					$("#job_description").summernote("code", jobDescription);
+					
+					$scope.job_description = finTempObj.job_description;
+					
+					// var markupStr = $('#job_description').summernote('code');
+					// $scope.job_description = markupStr;
+					$('#job_description_preview').empty();
+					angular.element('#job_description_preview').append($scope.job_description);
+					
+					
+					
+					
+					
+					// $('#job_description').summernote('editor.pasteHTML', jobDescription);
+					// finTempObj.department;
+					$scope.changeDepartment(); 
+					$scope.changeExperience();
+					/*  department */
+					var deptNames = c.data.departments;
+					var deptName = deptNames.filter(function(dept) {
+						return dept.id == finTempObj.department;
+					});
+					if(Object.keys(deptName).length != 0){
+						$scope.jobDepartment_preview  =	deptName[0].name;
+						}else{
+						$scope.jobDepartment_preview  =  	"Any";
+					}
+					/*  exp */
+					var expNames = c.data.experienceList;
+					var expName = expNames.filter(function(ex) {
+						return ex.value == finTempObj.experience_level;
+					});
+					if(Object.keys(expName).length != 0){
+						$scope.experience_preview 	  =	expName[0].label;
+						}else{
+						$scope.experience_preview =   	"Any";
+					}
+					
+					
+					// $scope.formStep1.$setTouched();
+					$scope.job_descriptionInvTouched = true;
+					$scope.selectedUserTouched = true;
+					$scope.hiringManagerInvTouched = true;
+					
+					
+					if ($scope.formStep1.$invalid) {
+						angular.forEach($scope.formStep1.$error, function (field) {
+							angular.forEach(field, function(errorField){
+								errorField.$setTouched();
+							})
+						});
+						// alert("Form is invalid.");
+					}
+					
+				})
+			}
+			else{
+				$scope.resetAddForm();
+			}
+			
+			
+		}
+		//Load data from existing template ends here
+		if(c.data.templateId){
+			$scope.template = c.data.templateId;
+			//getTemplateDetails();
+			$scope.getTemplateDetails();
+		}
+		
+		//check contract_period required or not
+		$scope.checkContractPeriodRequiredOrNot = function () {
+			$scope.data.funcName = 'checkContractPeriodRequiredOrNot';
+			$scope.data.employmentTypeId = $scope.employmentType;
+			c.server.update().then(function(){
+				$scope.data.contract_period_requied_flag = c.data.contract_period_requied_flag;
+				$scope.data.funcName = undefined;
+				$scope.data.employmentTypeId = '';
+				
+			});
+		}
+		
+		//check contract_period required or not
+		/* 	$scope.checkRequestedTypeDescriptionRequiredOrNot = function () {
+			$scope.data.funcName = 'checkRequestedTypeDescriptionRequiredOrNot';
+			$scope.data.request_type_value = $scope.requestedType;
+			c.server.update().then(function(){
+			$scope.data.requestedTypeIsJustification = 	c.data.requestedTypeIsJustification;
+			$scope.data.requestedTypeIsReplacement   = c.data.requestedTypeIsReplacement;
+			
+			$scope.data.funcName = undefined;
+			$scope.data.request_type_value = '';
+			
+			});
+		} */
+		
+	}, 2000);
+	//fields data ends
+}			

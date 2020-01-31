@@ -1,0 +1,119 @@
+This application is no longer in use (AON APM team to follow up for retirement date)
+
+mail script:
+
+
+(function runMailScript(/* GlideRecord */ current, /* TemplatePrinter */ template,
+										   /* Optional EmailOutbound */ email, /* Optional GlideRecord */ email_action,
+										   /* Optional GlideRecord */ event) {
+
+
+
+	var grCi = new GlideRecord('cmdb_rel_ci');
+	grCi.addQuery('parent',current.id);
+	grCi.query();
+	gs.info('items cis found ' + grCi.getRowCount() + ' -- ' + current.id + '-- ' + current.getDisplayValue('id'));
+	var items = [];
+	while(grCi.next()){ 
+
+		items.push( 
+			grCi.getDisplayValue('child') 
+		);
+	}
+
+	// Add your code herevar gr=new GlideRecord('cert_element');
+	var gr=new GlideRecord('cert_element');
+	//gr.addEncodedQuery('cert_task='+current.cert_task+'^element=active^original_value=true');
+	gr.addEncodedQuery('cert_task='+current.cert_task);
+	//gr.addQuery('cert_task', current.sys_id);
+	gr.query();
+
+	if(gr.next()){
+		template.print( gr.id.getDisplayValue('name')+'<br><br>');
+		gs.info("Testing abc" + gr.id);
+		var gr1=new GlideRecord('cert_element');
+		gr1.addEncodedQuery('cert_task='+ current.cert_task + '^id=' + gr.id);
+		//gr.addQuery('cert_task', current.sys_id);
+		gr1.query();
+		template.print('<table border="1"><thead><tr><th>Certification Element</th><th>Value</th></tr></thead><tbody>');
+		while(gr1.next()){
+			//var watcherIds = current.watch_list.split(",");
+			var name =gr1.getDisplayValue('element');
+			var value = "id." + name;
+			template.print('<tr><td>'+gr1.getElement(value).getLabel()+'</td><td>'+gr1.getDisplayValue(value)+'</td></tr>');
+			//template.print(gr1.getElement(value).getLabel());
+			//template.print(gr1.getDisplayValue(value));
+			//	template.print("short_description", gr.getvalue('short_description'));
+			if(gr1.getElement(value).getLabel() == 'Active')
+				gr1.setValue('original_value','false');
+			gr1.update();
+		}
+
+		template.print('</tbody></table><br><br>');
+
+		template.print('<p><strong> Related configuration Items: </strong> </p>');
+		for(var t = 0 ; t < items.length ; t++ ){
+			template.print('<p> '+items[t]+' </p>');
+		}
+	}
+})(current, template, email, email_action, event);
+
+
+
+
+------------------------------------------------------------------------------
+
+inbound action for reject
+
+(function runAction(/*GlideRecord*/ current, /*GlideRecord*/ event, /*EmailWrapper*/ email, /*ScopedEmailLogger*/ logger, /*EmailClassifier*/ classifier) {
+
+	// Implement email action here
+/*	var gr  = new GlideRecord('cert_element');
+	gr.addQuery('cert_task',current.cert_task);
+	gr.addQuery('id',current.id);
+	gr.query();
+	while(gr.next()){
+		gr.setValue('state','Failed');
+		gr.update();
+	}
+	gs.info('Logging current rec id ' + current.sys_id );
+	var gr  = new GlideRecord('cert_task');
+	gr.addQuery('state',current.state);
+	gr.query();
+	while(gr.next()){
+		gr.setValue('state','4');
+		
+	}*/
+})(current, event, email, logger, classifier);
+
+email.recipients.toLowerCase().indexOf("dev85534@service-now.com") > -1
+
+
+----------------------------------------------------------------
+
+/*	var gr = new GlideRecord('cert_task');
+	gr.addQuery('assigned_to',current.cert_element.assigned_to);
+	gr.addQuery('id',current.id);
+	gr.query();
+	while(gr.next()){
+		gr.setValue('assigned_to','Product Director');
+		gr.update();*/
+
+fb5fcc5bdbb0bf8c5f1d0bc7f49619da
+
+
+066dabf64f106e0023484da28110c792
+782f1120370bc60097315aa543990e82
+
+aondev@service-now.com
+---------------------------------------------------------------------------------------
+
+var gr  = new GlideRecord('cert_element');
+	gr.addQuery('cert_task',current.cert_task);
+	gr.addQuery('id',current.id);
+	gr.query();
+	while(gr.next()){
+		gr.setValue('state','Certified');
+		gr.update();
+	}
+	gs.info('Logging current rec id ' + current.sys_id );

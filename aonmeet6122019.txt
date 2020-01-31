@@ -1,0 +1,12 @@
+Ques:
+Currently one notification is sent to the business application owner for a particular certification task which contains all the 
+business applications of which he is the owner.
+Do we want individual notifications to be sent out for each business application 
+
+notes:
+1500 users dont have acess to the system, sending as a pdf.
+
+only for operational 
+first form-then decide what info needs to be sent to the application owner
+no set dates - Days to complete
+data governance team - one person not a team

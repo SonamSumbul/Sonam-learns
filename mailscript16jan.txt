@@ -1,0 +1,64 @@
+//This Email Script displays the name and value of the Certification Elements in a table in the notification and it also displays the Business Services and their Software models for a Business Application
+
+(function runMailScript( /* GlideRecord */ current, /* TemplatePrinter */ template,
+    /* Optional EmailOutbound */
+    email, /* Optional GlideRecord */ email_action,
+    /* Optional GlideRecord */
+    event) {
+
+    var tableString; //To print the name and value of Certification elements in a table in notification
+    var appID = event.parm1; //sys_id of Business Applications
+
+    // To get the certification tasks and the related Business Application from the Certification Element
+    var task_cert = new GlideRecord('cert_element');
+    task_cert.addEncodedQuery('cert_task=' + current.sys_id + '^id=' + appID);
+    task_cert.query();
+    if (task_cert.next()) {
+        tableString = task_cert.id.getDisplayValue('name') + '<br><br><br>'; //prints the name of the Certification element
+
+        //To get the name and value of the Certification elements 
+        var task_element = new GlideRecord('cert_element');
+        task_element.addEncodedQuery('cert_task=' + current.sys_id + '^id=' + task_cert.id);
+        task_element.query();
+        tableString += '<table border="1"><thead><tr><th>Certification Element</th><th>Value</th></tr></thead><tbody>'; //prints the heading of the table in the notification
+
+        while (task_element.next()) {
+            var name = task_element.getDisplayValue('element'); //stores label of the element
+            var value = "id." + name; //stores value of the corresponding element
+            var data = task_element.getDisplayValue(value); //displays the value of the corresponding element
+            if (!data) {
+                data = '-'; //Display '-' if no data is present for the certification element
+            }
+            tableString += '<tr><td>' + task_element.getElement(value).getLabel() + '</td><td>' + data + '</td></tr>'; //prints the value of the Certification elements in the table
+            task_element.update();
+        }
+    }
+    tableString += '</tbody></table>';
+    template.print(tableString);
+
+    //To show the Business Application's relation with a Businesss Service and their software models
+    /*var grRel = new GlideRecord('cmdb_rel_ci');
+    grRel.addQuery('type', '41008aa6ef32010098d5925495c0fb94'); //For CI Relation Type Consumed:Consumed By
+    grRel.addQuery('parent.sys_class_name', 'cmdb_ci_business_app'); //Parent is Business Application
+    grRel.addQuery('child.sys_class_name', 'INSTANCEOF', 'cmdb_ci_service'); //Child Class name is Business Service
+    grRel.addQuery('parent', appID);
+    grRel.query();
+    while (grRel.next()) {
+        //To get the Software models for a Business Service
+        var grSWM = new GlideRecord('sn_apm_tpm_service_software_model');
+        grSWM.addQuery('business_service', grRel.child);
+        grSWM.query();
+        while (grSWM.next()) {
+            template.print('<p>' + 'Service:' + grRel.child.name + '</p>'); //prints the Business Service
+            template.print('<p>' + 'Software models:' + grSWM.software_model.display_name + '</p>'); //prints the related software model
+        }
+    }*/
+	template.print('<p>Associated Softwares:</p>');
+	var grRel = new GlideRecord('cmdb_software_instance');
+	grRel.addQuery('installed_on',appID);
+	grRel.query();
+	while(grRel.next()){
+	
+      template.print('<p>'+ grRel.software.name + '</p>'); //prints the related software model
+	}
+})(current, template, email, email_action, event);

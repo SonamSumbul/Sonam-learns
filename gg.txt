@@ -1,0 +1,10 @@
+c.	In “View Policy” scroll down to the “Policy Document” section.
+d.	Click on the Adobe PDF file “hr035 slhs shift differentials 2013.”
+Open Lawson / myBC.
+Type HR11 in the search field.
+
+HR11 Page Displays.
+Enter “1000” in the “Company” search field.
+Enter the employee ID in the “Employee” search field.
+Click “Inquire” button.
+Requisition. If the position already exists, you should be able to search for the position by Process Level, Department, Job Code, or Position Description as you enter the job requisition information. 
